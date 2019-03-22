@@ -36,6 +36,8 @@
   <default_proto>
     <prototype name="__stdcall" extrapop="0" stackshift="0">
       <input killedbycall="true">  <!-- assume parameter passing register locations are killedbycall -->
+
+        <!-- 32 bit floats -->
         <pentry minsize="1" maxsize="4" metatype="float">
           <register name="f12"/>
         </pentry>
@@ -61,6 +63,33 @@
           <register name="f19"/>
         </pentry>
 
+        <!-- doubles -->
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="a0_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="a1_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="a2_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="a3_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="t0_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="t1_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="t2_qw"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="t3_qw"/>
+        </pentry>
+
+        <!-- 64 integers -->
         <pentry minsize="1" maxsize="8" extension="sign">
           <register name="a0"/>
         </pentry>
@@ -92,6 +121,9 @@
       <output>
         <pentry minsize="4" maxsize="4" metatype="float">
           <register name="f0"/>
+        </pentry>
+        <pentry minsize="9" maxsize="16" extension="float">
+          <register name="v0_qw"/>
         </pentry>
         <pentry minsize="1" maxsize="8" extension="sign">
           <register name="v0"/>
