@@ -19,15 +19,15 @@ define register offset=0x300 size=8 [ hi hi1 lo lo1 tsp ];  #64 bit
 
 #64 bit representation of the 128 bit registers
 define register offset=0 size=8 [
-    zero _ at _ v0 _ v1 _
-    a0 _ a1 _ a2 _ a3 _
-    t0 _ t1 _ t2 _ t3 _
-    t4 _ t5 _ t6 _ t7 _
-    s0 _ s1 _ s2 _ s3 _
-    s4 _ s5 _ s6 _ s7 _
-    t8 _ t9 _ k0 _ k1 _
-    gp _ sp _ fp _ ra _
-    pc _
+    zero zero_udw at at_udw v0 v0_udw v1 v1_udw
+    a0 a0_udw a1 a1_udw a2 a2_udw a3 a3_udw
+    t0 t0_udw t1 t1_udw t2 t2_udw t3 t3_udw
+    t4 t4_udw t5 t5_udw t6 t6_udw t7 t7_udw
+    s0 s0_udw s1 s1_udw s2 s2_udw s3 s3_udw
+    s4 s4_udw s5 s5_udw s6 s6_udw s7 s7_udw
+    t8 t8_udw t9 t9_udw k0 k0_udw k1 k1_udw
+    gp gp_udw sp sp_udw fp fp_udw ra ra_udw
+    pc_udw pc
 ];
 
 # 32 bit representation of the 128 bit registers
@@ -51,6 +51,10 @@ define token instr(32)
     rs128		= (21,25)
     rt128		= (16,20)
     rd128		= (11,15)
+
+    rsudw		= (21,25)
+    rtudw		= (16,20)
+    rdudw		= (11,15)
 
     rs32		= (21,25)
     rt32		= (16,20)
@@ -141,6 +145,14 @@ attach variables [ rs rt rd base ] [
     t8    t9  k0  k1  gp  sp  fp  ra
 ];
 
+# upper 64 bit
+attach variables [ rsudw rtudw rdudw ] [
+    zero_udw  at_udw  v0_udw  v1_udw  a0_udw  a1_udw  a2_udw  a3_udw
+    t0_udw    t1_udw  t2_udw  t3_udw  t4_udw  t5_udw  t6_udw  t7_udw
+    s0_udw    s1_udw  s2_udw  s3_udw  s4_udw  s5_udw  s6_udw  s7_udw
+    t8_udw    t9_udw  k0_udw  k1_udw  gp_udw  sp_udw  fp_udw  ra_udw
+];
+
 # 128 bit
 attach variables [ rs128 rt128 rd128 ] [
     zero_qw  at_qw  v0_qw  v1_qw  a0_qw  a1_qw  a2_qw  a3_qw
@@ -176,6 +188,12 @@ RS32src: rs   	is rs & rs32=0      { export 0:4; }
 RT32: rt      	is rt & rt32        { export rt32; }
 RT32src: rt   	is rt & rt32        { export rt32; }
 RT32src: rt   	is rt & rt32=0      { export 0:4; }
+
+RDUDW: rd      	is rd & rdudw        { export rdudw; }
+RSUDWsrc: rs   	is rs & rsudw        { export rsudw; }
+RSUDWsrc: rs   	is rs & rsudw=0      { export 0:8; }
+RTUDWsrc: rt   	is rt & rtudw        { export rtudw; }
+RTUDWsrc: rt   	is rt & rtudw=0      { export 0:8; }
 
 # relative offsets
 Rel16: reloc		is off16	[ reloc=inst_start+4+4*off16; ]					{ export *:4 reloc; }

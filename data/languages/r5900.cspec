@@ -25,6 +25,7 @@
   <funcptr align="2"/>
   <spacebase name="gp" register="gp_lo" space="ram"/>
   <global>
+    <!-- Unsure if the fp needs to be here or not -->
     <range space="gp"/>
     <range space="ram"/>
     <range space="register" first="0x2000" last="0x2fff"/>
@@ -34,7 +35,7 @@
     <register name="ra"/>
   </returnaddress>
   <default_proto>
-    <prototype name="__stdcall" extrapop="0" stackshift="0">
+    <prototype name="__stdcall" extrapop="0x10" stackshift="0x10">
       <input killedbycall="true">  <!-- assume parameter passing register locations are killedbycall -->
         <pentry minsize="1" maxsize="4" metatype="float">
           <register name="f12"/>
@@ -85,7 +86,7 @@
         <pentry minsize="1" maxsize="8" extension="sign">
           <register name="t3"/>
         </pentry>
-        <pentry minsize="1" maxsize="500" align="8">
+        <pentry minsize="1" maxsize="500" align="0x10">
           <addr offset="0" space="stack"/>
         </pentry>
       </input>
@@ -93,8 +94,14 @@
         <pentry minsize="4" maxsize="4" metatype="float">
           <register name="f0"/>
         </pentry>
+        <pentry minsize="4" maxsize="4" metatype="float">
+          <register name="f2"/>
+        </pentry>
         <pentry minsize="1" maxsize="8" extension="sign">
           <register name="v0"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="sign">
+          <register name="v1"/>
         </pentry>
       </output>
       <unaffected>
@@ -116,6 +123,12 @@
         <register name="f28"/>
         <register name="f30"/>
       </unaffected>
+      <likelytrash>
+        <register name="t4"/>
+        <register name="t5"/>
+        <register name="t6"/>
+        <register name="t7"/>
+      </likelytrash>
     </prototype>
   </default_proto>
 </compiler_spec>
