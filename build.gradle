@@ -31,3 +31,21 @@ else {
 	throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
 }
 //----------------------END "DO NOT MODIFY" SECTION-------------------------------
+
+import org.gradle.internal.os.OperatingSystem
+
+def sleigh_path
+if (OperatingSystem.current() == OperatingSystem.WINDOWS)
+	sleigh_path = "/support/sleigh.bat"
+else
+	sleigh_path = "/support/sleigh"
+
+def sleigh = new File(ghidraInstallDir).getCanonicalPath() + sleigh_path
+task runSleigh(type:Exec) {
+    commandLine sleigh, "-a", "data/languages"
+}
+
+runSleigh.inputs.file('data/languages/r5900.slaspec')
+runSleigh.outputs.file('data/languages/r5900.sla')
+buildExtension.exclude '/.vscode'
+buildExtension.dependsOn runSleigh
