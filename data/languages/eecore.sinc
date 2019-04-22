@@ -1,98 +1,12 @@
 # EE core-specific instructions
 
-define register offset=0x400 size=8 [ fsa ];       # 64 bit
+# countLeadingZeros(val)
+define pcodeop countLeadingZeros;
 
-define pcodeop PABSH;
-define pcodeop PABSW;
-define pcodeop PADDB;
-define pcodeop PADDH;
-define pcodeop PADDSB;
-define pcodeop PADDSH;
-define pcodeop PADDSW;
-define pcodeop PADDUB;
-define pcodeop PADDUH;
-define pcodeop PADDUW;
-define pcodeop PADDW;
-define pcodeop PADSBH;
-define pcodeop PAND;
-define pcodeop PCEQB;
-define pcodeop PCEQH;
-define pcodeop PCEQW;
-define pcodeop PCGTB;
-define pcodeop PCGTH;
-define pcodeop PCGTW;
-define pcodeop PCPYH;
-define pcodeop PCPYLD;
-define pcodeop PCPYUD;
-define pcodeop PDIVBW;
-define pcodeop PDIVUW;
-define pcodeop PDIVW;
-define pcodeop PEXCH;
-define pcodeop PEXCW;
-define pcodeop PEXEH;
-define pcodeop PEXEW;
-define pcodeop PEXT5;
-define pcodeop PEXTLB;
-define pcodeop PEXTLH;
-define pcodeop PEXTLW;
-define pcodeop PEXTUB;
-define pcodeop PEXTUH;
-define pcodeop PEXTUW;
-define pcodeop PHMADH;
-define pcodeop PHMSBH;
-define pcodeop PINTEH;
-define pcodeop PINTH;
-define pcodeop PLZCW;
-define pcodeop PMADDH;
-define pcodeop PMADDUW;
-define pcodeop PMADDW;
-define pcodeop PMAXH;
-define pcodeop PMAXW;
-define pcodeop PMFHI;
-define pcodeop PMFHL.LH;
-define pcodeop PMFHL.LW;
-define pcodeop PMFHL.SH;
-define pcodeop PMFHL.SLW;
-define pcodeop PMFHL.UW;
-define pcodeop PMFLO;
-define pcodeop PMINH;
-define pcodeop PMINW;
-define pcodeop PMSUBH;
-define pcodeop PMSUBW;
-define pcodeop PMTHI;
-define pcodeop PMTHL;
-define pcodeop PMTLO;
-define pcodeop PMULTH;
-define pcodeop PMULTUW;
-define pcodeop PMULTW;
-define pcodeop PNOR;
-define pcodeop POR;
-define pcodeop PPAC5;
-define pcodeop PPACB;
-define pcodeop PPACH;
-define pcodeop PPACW;
-define pcodeop PREVH;
-define pcodeop PROT3W;
-define pcodeop PSLLH;
-define pcodeop PSLLVW;
-define pcodeop PSLLW;
-define pcodeop PSRAH;
-define pcodeop PSRAVW;
-define pcodeop PSRAW;
-define pcodeop PSRLH;
-define pcodeop PSRLVW;
-define pcodeop PSRLW;
-define pcodeop PSUBB;
-define pcodeop PSUBH;
-define pcodeop PSUBSB;
-define pcodeop PSUBSH;
-define pcodeop PSUBSW;
-define pcodeop PSUBUB;
-define pcodeop PSUBUH;
-define pcodeop PSUBUW;
-define pcodeop PSUBW;
-define pcodeop PXOR;
-define pcodeop QFSRV;
+# countLeadingOnes(val)
+define pcodeop countLeadingOnes;
+
+define register offset=0x400 size=8 [ fsa ];       # 64 bit
 
 # 0111 10bb bbbt tttt iiii iiii iiii iiii
 :lq RT, OFF_BASE                         is prime=30 & OFF_BASE & RT {
@@ -342,532 +256,920 @@ with : prime=28 {
         RD = RSsrc;
     }
 
-    # PADDW
-    :paddw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=0 & fct=8 {
-        RD128 = PADDW(RS128src, RT128src);
+    # Special Case
+    :clear RD     is RD & rt=0 & rs=0 & mmiop=0x10 & fct=0x28 {
+        RD = 0;
+    }
+
+    :pabsh RD, RTsrc                        is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=5 & fct=0x28 {
+        RD[0,2] = abs(RTsrc[0,2]);
+        RD[2,4] = abs(RTsrc[2,4]);
+        RD[4,6] = abs(RTsrc[4,6]);
+        RD[6,8] = abs(RTsrc[6,8]);
+        RDUDW[0,2] = abs(RTUDWsrc[0,2]);
+        RDUDW[2,4] = abs(RTUDWsrc[2,4]);
+        RDUDW[4,6] = abs(RTUDWsrc[4,6]);
+        RDUDW[6,8] = abs(RTUDWsrc[6,8]);
+    }
+    :pabsw RD, RTsrc                        is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=1 & fct=0x28 {
+        RD[0,4] = abs(RTsrc[0,4]);
+        RD[4,8] = abs(RTsrc[4,8]);
+        RDUDW[0,4] = abs(RTUDWsrc[0,4]);
+        RDUDW[4,8] = abs(RTUDWsrc[4,8]);
+    }
+    :paddb RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=8 & fct=8 {
+        RD[0,1] = RTsrc[0,1] + RSsrc[0,1];
+        RD[1,2] = RTsrc[1,2] + RSsrc[1,2];
+        RD[2,3] = RTsrc[2,3] + RSsrc[2,3];
+        RD[3,4] = RTsrc[3,4] + RSsrc[3,4];
+        RD[4,5] = RTsrc[4,5] + RSsrc[4,5];
+        RD[5,6] = RTsrc[5,6] + RSsrc[5,6];
+        RD[6,7] = RTsrc[6,7] + RSsrc[6,7];
+        RD[7,8] = RTsrc[7,8] + RSsrc[7,8];
+        RDUDW[0,1] = RTUDWsrc[0,1] + RSUDWsrc[0,1];
+        RDUDW[1,2] = RTUDWsrc[1,2] + RSUDWsrc[1,2];
+        RDUDW[2,3] = RTUDWsrc[2,3] + RSUDWsrc[2,3];
+        RDUDW[3,4] = RTUDWsrc[3,4] + RSUDWsrc[3,4];
+        RDUDW[4,5] = RTUDWsrc[4,5] + RSUDWsrc[4,5];
+        RDUDW[5,6] = RTUDWsrc[5,6] + RSUDWsrc[5,6];
+        RDUDW[6,7] = RTUDWsrc[6,7] + RSUDWsrc[6,7];
+        RDUDW[7,8] = RTUDWsrc[7,8] + RSUDWsrc[7,8];
+    }
+    :paddh RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=4 & fct=8 {
+        RD[0,2] = RTsrc[0,2] + RSsrc[0,2];
+        RD[2,4] = RTsrc[2,3] + RSsrc[2,4];
+        RD[4,6] = RTsrc[4,6] + RSsrc[4,6];
+        RD[6,8] = RTsrc[6,8] + RSsrc[6,8];
+        RDUDW[0,2] = RTUDWsrc[0,2] + RSUDWsrc[0,1];
+        RDUDW[2,4] = RTUDWsrc[2,4] + RSUDWsrc[2,4];
+        RDUDW[4,6] = RTUDWsrc[4,6] + RSUDWsrc[4,6];
+        RDUDW[6,8] = RTUDWsrc[6,8] + RSUDWsrc[6,8];
+    }
+    :paddsb RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x18 & fct=8 {
+        sSatByte(RD[0,1], RTsrc[0,1] + RSsrc[0,1]);
+        sSatByte(RD[1,2], RTsrc[1,2] + RSsrc[1,2]);
+        sSatByte(RD[2,3], RTsrc[2,3] + RSsrc[2,3]);
+        sSatByte(RD[3,4], RTsrc[3,4] + RSsrc[3,4]);
+        sSatByte(RD[4,5], RTsrc[4,5] + RSsrc[4,5]);
+        sSatByte(RD[5,6], RTsrc[5,6] + RSsrc[5,6]);
+        sSatByte(RD[6,7], RTsrc[6,7] + RSsrc[6,7]);
+        sSatByte(RD[7,8], RTsrc[7,8] + RSsrc[7,8]);
+        sSatByte(RDUDW[0,1], RTUDWsrc[0,1] + RSUDWsrc[0,1]);
+        sSatByte(RDUDW[1,2], RTUDWsrc[1,2] + RSUDWsrc[1,2]);
+        sSatByte(RDUDW[2,3], RTUDWsrc[2,3] + RSUDWsrc[2,3]);
+        sSatByte(RDUDW[3,4], RTUDWsrc[3,4] + RSUDWsrc[3,4]);
+        sSatByte(RDUDW[4,5], RTUDWsrc[4,5] + RSUDWsrc[4,5]);
+        sSatByte(RDUDW[5,6], RTUDWsrc[5,6] + RSUDWsrc[5,6]);
+        sSatByte(RDUDW[6,7], RTUDWsrc[6,7] + RSUDWsrc[6,7]);
+        sSatByte(RDUDW[7,8], RTUDWsrc[7,8] + RSUDWsrc[7,8]);
+    }
+    :paddsh RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x14 & fct=8 {
+        sSatHalfWord(RD[0,2], RTsrc[0,2] + RSsrc[0,2]);
+        sSatHalfWord(RD[2,4], RTsrc[2,4] + RSsrc[2,4]);
+        sSatHalfWord(RD[4,6], RTsrc[4,6] + RSsrc[4,6]);
+        sSatHalfWord(RD[6,8], RTsrc[6,8] + RSsrc[6,8]);
+        sSatHalfWord(RDUDW[0,2], RTUDWsrc[0,2] + RSUDWsrc[0,2]);
+        sSatHalfWord(RDUDW[2,4], RTUDWsrc[2,4] + RSUDWsrc[2,4]);
+        sSatHalfWord(RDUDW[4,6], RTUDWsrc[4,6] + RSUDWsrc[4,6]);
+        sSatHalfWord(RDUDW[6,8], RTUDWsrc[6,8] + RSUDWsrc[6,8]);
+    }
+    :paddsw RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & RTUDWsrc & RSUDWsrc & mmiop=0x10 & fct=0x8 {
+        sSatWord(RD[0,4], RTsrc[0,4] + RSsrc[0,4]);
+        sSatWord(RD[4,8], RTsrc[4,8] + RSsrc[4,8]);
+        sSatWord(RDUDW[0,4], RTUDWsrc[0,4] + RSUDWsrc[0,4]);
+        sSatWord(RDUDW[4,8], RTUDWsrc[4,8] + RSUDWsrc[4,8]);
+    }
+
+    :paddub RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x18 & fct=0x28 {
+        uSatByte(RD[0,1], RTsrc[0,1] + RSsrc[0,1]);
+        uSatByte(RD[1,2], RTsrc[1,2] + RSsrc[1,2]);
+        uSatByte(RD[2,3], RTsrc[2,3] + RSsrc[2,3]);
+        uSatByte(RD[3,4], RTsrc[3,4] + RSsrc[3,4]);
+        uSatByte(RD[4,5], RTsrc[4,5] + RSsrc[4,5]);
+        uSatByte(RD[5,6], RTsrc[5,6] + RSsrc[5,6]);
+        uSatByte(RD[6,7], RTsrc[6,7] + RSsrc[6,7]);
+        uSatByte(RD[7,8], RTsrc[7,8] + RSsrc[7,8]);
+        uSatByte(RDUDW[0,1], RTUDWsrc[0,1] + RSUDWsrc[0,1]);
+        uSatByte(RDUDW[1,2], RTUDWsrc[1,2] + RSUDWsrc[1,2]);
+        uSatByte(RDUDW[2,3], RTUDWsrc[2,3] + RSUDWsrc[2,3]);
+        uSatByte(RDUDW[3,4], RTUDWsrc[3,4] + RSUDWsrc[3,4]);
+        uSatByte(RDUDW[4,5], RTUDWsrc[4,5] + RSUDWsrc[4,5]);
+        uSatByte(RDUDW[5,6], RTUDWsrc[5,6] + RSUDWsrc[5,6]);
+        uSatByte(RDUDW[6,7], RTUDWsrc[6,7] + RSUDWsrc[6,7]);
+        uSatByte(RDUDW[7,8], RTUDWsrc[7,8] + RSUDWsrc[7,8]);
+    }
+    :padduh RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x14 & fct=0x28 {
+        uSatHalfWord(RD[0,2], RTsrc[0,2] + RSsrc[0,2]);
+        uSatHalfWord(RD[2,4], RTsrc[2,4] + RSsrc[2,4]);
+        uSatHalfWord(RD[4,6], RTsrc[4,6] + RSsrc[4,6]);
+        uSatHalfWord(RD[6,8], RTsrc[6,8] + RSsrc[6,8]);
+        uSatHalfWord(RDUDW[0,2], RTUDWsrc[0,2] + RSUDWsrc[0,2]);
+        uSatHalfWord(RDUDW[2,4], RTUDWsrc[2,4] + RSUDWsrc[2,4]);
+        uSatHalfWord(RDUDW[4,6], RTUDWsrc[4,6] + RSUDWsrc[4,6]);
+        uSatHalfWord(RDUDW[6,8], RTUDWsrc[6,8] + RSUDWsrc[6,8]);
+    }
+    :padduw RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & RTUDWsrc & RSUDWsrc & mmiop=0x10 & fct=0x28 {
+        uSatWord(RD[0,4], RTsrc[0,4] + RSsrc[0,4]);
+        uSatWord(RD[4,8], RTsrc[4,8] + RSsrc[4,8]);
+        uSatWord(RDUDW[0,4], RTUDWsrc[0,4] + RSUDWsrc[0,4]);
+        uSatWord(RDUDW[4,8], RTUDWsrc[4,8] + RSUDWsrc[4,8]);
+    }
+    :paddw RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & RTUDWsrc & RSUDWsrc & mmiop=0 & fct=0x8 {
+        RD[0,4] = RTsrc[0,4] + RSsrc[0,4];
+        RD[4,8] = RTsrc[4,8] + RSsrc[4,8];
+        RDUDW[0,4] = RTUDWsrc[0,4] + RSUDWsrc[0,4];
+        RDUDW[4,8] = RTUDWsrc[4,8] + RSUDWsrc[4,8];
+    }
+    :padsbh RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=4 & fct=0x28 {
+        RD[0,2] = RSsrc[0,2] - RTsrc[0,2];
+        RD[2,4] = RSsrc[2,4] - RTsrc[2,3];
+        RD[4,6] = RSsrc[4,6] - RTsrc[4,6];
+        RD[6,8] = RSsrc[6,8] - RTsrc[6,8];
+        RDUDW[0,2] = RTUDWsrc[0,2] + RSUDWsrc[0,1];
+        RDUDW[2,4] = RTUDWsrc[2,4] + RSUDWsrc[2,4];
+        RDUDW[4,6] = RTUDWsrc[4,6] + RSUDWsrc[4,6];
+        RDUDW[6,8] = RTUDWsrc[6,8] + RSUDWsrc[6,8];
+    }
+    :pand RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x12 & fct=0x9 {
+        RD = RSsrc & RTsrc;
+        RDUDW = RTUDWsrc & RSUDWsrc;
+    }
+    :pceqb RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0xA & fct=0x28 {
+        pEqual(RD[0,1], RTsrc[0,1], RSsrc[0,1]);
+        pEqual(RD[1,2], RTsrc[1,2], RSsrc[1,2]);
+        pEqual(RD[2,3], RTsrc[2,3], RSsrc[2,3]);
+        pEqual(RD[3,4], RTsrc[3,4], RSsrc[3,4]);
+        pEqual(RD[4,5], RTsrc[4,5], RSsrc[4,5]);
+        pEqual(RD[5,6], RTsrc[5,6], RSsrc[5,6]);
+        pEqual(RD[6,7], RTsrc[6,7], RSsrc[6,7]);
+        pEqual(RD[7,8], RTsrc[7,8], RSsrc[7,8]);
+        pEqual(RDUDW[0,1], RTUDWsrc[0,1], RSUDWsrc[0,1]);
+        pEqual(RDUDW[1,2], RTUDWsrc[1,2], RSUDWsrc[1,2]);
+        pEqual(RDUDW[2,3], RTUDWsrc[2,3], RSUDWsrc[2,3]);
+        pEqual(RDUDW[3,4], RTUDWsrc[3,4], RSUDWsrc[3,4]);
+        pEqual(RDUDW[4,5], RTUDWsrc[4,5], RSUDWsrc[4,5]);
+        pEqual(RDUDW[5,6], RTUDWsrc[5,6], RSUDWsrc[5,6]);
+        pEqual(RDUDW[6,7], RTUDWsrc[6,7], RSUDWsrc[6,7]);
+        pEqual(RDUDW[7,8], RTUDWsrc[7,8], RSUDWsrc[7,8]);
+    }
+    :pceqh RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x6 & fct=0x28 {
+        pEqual(RD[0,2], RTsrc[0,2], RSsrc[0,2]);
+        pEqual(RD[2,4], RTsrc[2,4], RSsrc[2,4]);
+        pEqual(RD[4,6], RTsrc[4,6], RSsrc[4,6]);
+        pEqual(RD[6,8], RTsrc[6,8], RSsrc[6,8]);
+        pEqual(RDUDW[0,2], RTUDWsrc[0,2], RSUDWsrc[0,2]);
+        pEqual(RDUDW[2,4], RTUDWsrc[2,4], RSUDWsrc[2,4]);
+        pEqual(RDUDW[4,6], RTUDWsrc[4,6], RSUDWsrc[4,6]);
+        pEqual(RDUDW[6,8], RTUDWsrc[6,8], RSUDWsrc[6,8]);
+    }
+    :pceqw RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x2 & fct=0x28 {
+        pEqual(RD[0,4], RTsrc[0,4], RSsrc[0,4]);
+        pEqual(RD[4,8], RTsrc[4,8], RSsrc[4,8]);
+        pEqual(RDUDW[0,4], RTUDWsrc[0,4], RSUDWsrc[0,4]);
+        pEqual(RDUDW[4,8], RTUDWsrc[4,8], RSUDWsrc[4,8]);
+    }
+    :pcgtb RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0xA & fct=0x8 {
+        pGreaterThan(RD[0,1], RSsrc[0,1], RTsrc[0,1]);
+        pGreaterThan(RD[1,2], RSsrc[1,2], RTsrc[1,2]);
+        pGreaterThan(RD[2,3], RSsrc[2,3], RTsrc[2,3]);
+        pGreaterThan(RD[3,4], RSsrc[3,4], RTsrc[3,4]);
+        pGreaterThan(RD[4,5], RSsrc[4,5], RTsrc[4,5]);
+        pGreaterThan(RD[5,6], RSsrc[5,6], RTsrc[5,6]);
+        pGreaterThan(RD[6,7], RSsrc[6,7], RTsrc[6,7]);
+        pGreaterThan(RD[7,8], RSsrc[7,8], RTsrc[7,8]);
+        pGreaterThan(RDUDW[0,1], RSUDWsrc[0,1], RTUDWsrc[0,1]);
+        pGreaterThan(RDUDW[1,2], RSUDWsrc[1,2], RTUDWsrc[1,2]);
+        pGreaterThan(RDUDW[2,3], RSUDWsrc[2,3], RTUDWsrc[2,3]);
+        pGreaterThan(RDUDW[3,4], RSUDWsrc[3,4], RTUDWsrc[3,4]);
+        pGreaterThan(RDUDW[4,5], RSUDWsrc[4,5], RTUDWsrc[4,5]);
+        pGreaterThan(RDUDW[5,6], RSUDWsrc[5,6], RTUDWsrc[5,6]);
+        pGreaterThan(RDUDW[6,7], RSUDWsrc[6,7], RTUDWsrc[6,7]);
+        pGreaterThan(RDUDW[7,8], RSUDWsrc[7,8], RTUDWsrc[7,8]);
+    }
+    :pcgth RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x6 & fct=0x8 {
+        pGreaterThan(RD[0,2], RSsrc[0,2], RTsrc[0,2]);
+        pGreaterThan(RD[2,4], RSsrc[2,4], RTsrc[2,4]);
+        pGreaterThan(RD[4,6], RSsrc[4,6], RTsrc[4,6]);
+        pGreaterThan(RD[6,8], RSsrc[6,8], RTsrc[6,8]);
+        pGreaterThan(RDUDW[0,2], RSUDWsrc[0,2], RTUDWsrc[0,2]);
+        pGreaterThan(RDUDW[2,4], RSUDWsrc[2,4], RTUDWsrc[2,4]);
+        pGreaterThan(RDUDW[4,6], RSUDWsrc[4,6], RTUDWsrc[4,6]);
+        pGreaterThan(RDUDW[6,8], RSUDWsrc[6,8], RTUDWsrc[6,8]);
+    }
+    :pcgtw RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x2 & fct=0x8 {
+        pGreaterThan(RD[0,4], RSsrc[0,4], RTsrc[0,4]);
+        pGreaterThan(RD[4,8], RSsrc[4,8], RTsrc[4,8]);
+        pGreaterThan(RDUDW[0,4], RSUDWsrc[0,4], RTUDWsrc[0,4]);
+        pGreaterThan(RDUDW[4,8], RSUDWsrc[4,8], RTUDWsrc[4,8]);
+    }
+    :pcpyh RD, RTsrc                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=0x1B & fct=0x29 {
+        RD[0,2] = RTsrc[0,2];
+        RD[2,4] = RTsrc[0,2];
+        RD[4,6] = RTsrc[0,2];
+        RD[6,8] = RTsrc[0,2];
+        RDUDW[0,2] = RTUDWsrc[0,2];
+        RDUDW[2,4] = RTUDWsrc[0,2];
+        RDUDW[4,6] = RTUDWsrc[0,2];
+        RDUDW[6,8] = RTUDWsrc[0,2];
+    }
+    :pcpyld RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & mmiop=0xE & fct=0x9 {
+        RD = RTsrc;
+        RDUDW = RSsrc;
+    }
+    :pcpyud RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0xE & fct=0x29 {
+        RD = RSUDWsrc;
+        RDUDW = RTUDWsrc;
+    }
+    :pdivbw RSsrc, RTsrc        is RSsrc & RTsrc & RSUDWsrc & rd=0 & mmiop=0x1D & fct=0x9 {
+        lo[0,4] = sext(RSsrc[0,4] s/ RTsrc[0,4]);
+        hi[0,4] = zext(RSsrc[0,4] s% RTsrc[0,4]);
+        lo[4,8] = sext(RSsrc[4,8] s/ RTsrc[0,4]);
+        hi[4,8] = zext(RSsrc[4,8] s% RTsrc[0,4]);
+        lo1[0,4] = sext(RSUDWsrc[0,4] s/ RTsrc[0,4]);
+        hi1[0,4] = zext(RSUDWsrc[0,4] s% RTsrc[0,4]);
+        lo1[4,8] = sext(RSUDWsrc[4,8] s/ RTsrc[0,4]);
+        hi1[4,8] = zext(RSUDWsrc[4,8] s% RTsrc[0,4]);
+    }
+    :pdivuw RS32src, RT32src        is RS32src & RT32src & RSUDWsrc & RTUDWsrc & rd=0 & mmiop=0xD & fct=0x29 {
+        lo = sext(RS32src / RT32src);
+        hi = sext(RS32src % RT32src);
+        lo1 = sext(RSUDWsrc:4 / RTUDWsrc:4);
+        hi1 = sext(RSUDWsrc:4 % RTUDWsrc:4);
+    }
+    :pdivw RS32src, RT32src         is RS32src & RT32src & RSUDWsrc & RTUDWsrc & rd=0 & mmiop=0xD & fct=0x9 {
+        lo = sext(RS32src s/ RT32src);
+        hi = sext(RS32src s% RT32src);
+        lo1 = sext(RSUDWsrc:4 s/ RTUDWsrc:4);
+        hi1 = sext(RSUDWsrc:4 s% RTUDWsrc:4);
+    }
+    :pexch RD, RTsrc                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=0x1A & fct=0x29 {
+        RD[0,2] = RTsrc[0,2];
+        RD[2,4] = RTsrc[4,6];
+        RD[4,6] = RTsrc[2,4];
+        RD[6,8] = RTsrc[6,8];
+        RDUDW[0,2] = RTUDWsrc[0,2];
+        RDUDW[2,4] = RTUDWsrc[4,6];
+        RDUDW[4,6] = RTUDWsrc[2,4];
+        RDUDW[6,8] = RTUDWsrc[6,8];
+    }
+    :pexcw RD, RTsrc                is RD & RTsrc & RTUDWsrc & RDUDW & rs=0 & mmiop=0x1E & fct=0x29 {
+        RD[0,4] = RTsrc[0,4];
+        RDUDW[0,4] = RTsrc[4,8];
+        RD[4,8] = RTUDWsrc[0,4];
+        RDUDW[4,8] = RTUDWsrc[4,8];
+    }
+    :pexeh RD, RTsrc                is RD & RTsrc & RTUDWsrc & RDUDW & rs=0 & mmiop=0x1A & fct=0x9 {
+        RD[0,2] = RTsrc[4,6];
+        RD[2,4] = RTsrc[2,4];
+        RD[4,6] = RTsrc[0,2];
+        RD[6,8] = RTsrc[6,8];
+        RDUDW[0,2] = RTUDWsrc[4,6];
+        RDUDW[2,4] = RTUDWsrc[2,4];
+        RDUDW[4,6] = RTUDWsrc[0,2];
+        RDUDW[6,8] = RTUDWsrc[6,8];
+    }
+    :pexew RD, RTsrc                is RD & RTsrc & RTUDWsrc & RDUDW & rs=0 & mmiop=0x1E & fct=0x9 {
+        RD[0,4] = RTUDWsrc[0,4];
+        RD[4,8] = RTsrc[4,8];
+        RDUDW[0,4] = RTsrc[0,4];
+        RDUDW[4,8] = RTUDWsrc[4,8];
+    }
+    :pext5 RD, RTsrc                is RD & RTsrc & RTUDWsrc & RDUDW & rs=0 & mmiop=0x1E & fct=0x8 {
+        RD[0,4] = ((RTsrc[0,2] & 0x1F) | ((RTsrc[0,2] & 0x3E0) >> 5) | ((RTsrc[0,2] & 0x7C00) >> 10) | ((RTsrc[0,2] & 0x8000) >> 15));
+        RD[4,8] = ((RTsrc[4,6] & 0x1F) | ((RTsrc[4,6] & 0x3E0) >> 5) | ((RTsrc[4,6] & 0x7C00) >> 10) | ((RTsrc[4,6] & 0x8000) >> 15));
+        RDUDW[0,4] = ((RTUDWsrc[0,2] & 0x1F) | ((RTUDWsrc[0,2] & 0x3E0) >> 5) | ((RTUDWsrc[0,2] & 0x7C00) >> 10) | ((RTUDWsrc[0,2] & 0x8000) >> 15));
+        RDUDW[4,8] = ((RTUDWsrc[4,6] & 0x1F) | ((RTUDWsrc[4,6] & 0x3E0) >> 5) | ((RTUDWsrc[4,6] & 0x7C00) >> 10) | ((RTUDWsrc[4,6] & 0x8000) >> 15));
+    }
+    :pextlb RD, RSsrc, RTsrc        is RD & RDUDW & RSsrc & RTsrc & mmiop=0x1A & fct=0x8 {
+        RD[0,1] = RTsrc[0,1];
+        RD[1,2] = RSsrc[0,1];
+        RD[2,3] = RTsrc[1,2];
+        RD[3,4] = RSsrc[1,2];
+        RD[4,5] = RTsrc[2,3];
+        RD[5,6] = RSsrc[2,3];
+        RD[6,7] = RTsrc[3,4];
+        RD[7,8] = RSsrc[3,4];
+        RDUDW[0,1] = RTsrc[4,5];
+        RDUDW[1,2] = RSsrc[4,5];
+        RDUDW[2,3] = RTsrc[5,6];
+        RDUDW[3,4] = RSsrc[5,6];
+        RDUDW[4,5] = RTsrc[6,7];
+        RDUDW[5,6] = RSsrc[6,7];
+        RDUDW[6,7] = RTsrc[7,8];
+        RDUDW[7,8] = RSsrc[7,8];
+    }
+    :pextlh RD, RSsrc, RTsrc        is RD & RDUDW & RSsrc & RTsrc & mmiop=0x16 & fct=0x8 {
+        RD[0,2] = RTsrc[0,2];
+        RD[2,4] = RSsrc[0,2];
+        RD[4,6] = RTsrc[2,4];
+        RD[6,8] = RSsrc[2,4];
+        RDUDW[0,2] = RTsrc[4,6];
+        RDUDW[2,4] = RSsrc[4,6];
+        RDUDW[4,6] = RTsrc[6,8];
+        RDUDW[6,8] = RSsrc[6,8];
+    }
+    :pextlw RD, RSsrc, RTsrc        is RD & RDUDW & RSsrc & RTsrc & mmiop=0x12 & fct=0x8 {
+        RD[0,4] = RTsrc[0,4];
+        RD[4,8] = RSsrc[0,4];
+        RDUDW[0,4] = RTsrc[4,8];
+        RDUDW[4,8] = RSsrc[4,8];
+    }
+    :pextub RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTUDWsrc & RTsrc & mmiop=0x1A & fct=0x28 {
+        RD[0,1] = RTUDWsrc[0,1];
+        RD[1,2] = RSUDWsrc[0,1];
+        RD[2,3] = RTUDWsrc[1,2];
+        RD[3,4] = RSUDWsrc[1,2];
+        RD[4,5] = RTUDWsrc[2,3];
+        RD[5,6] = RSUDWsrc[2,3];
+        RD[6,7] = RTUDWsrc[3,4];
+        RD[7,8] = RSUDWsrc[3,4];
+        RDUDW[0,1] = RTUDWsrc[4,5];
+        RDUDW[1,2] = RSUDWsrc[4,5];
+        RDUDW[2,3] = RTUDWsrc[5,6];
+        RDUDW[3,4] = RSUDWsrc[5,6];
+        RDUDW[4,5] = RTUDWsrc[6,7];
+        RDUDW[5,6] = RSUDWsrc[6,7];
+        RDUDW[6,7] = RTUDWsrc[7,8];
+        RDUDW[7,8] = RSUDWsrc[7,8];
+    }
+    :pextuh RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x16 & fct=0x28 {
+        RD[0,2] = RTUDWsrc[0,2];
+        RD[2,4] = RSUDWsrc[0,2];
+        RD[4,6] = RTUDWsrc[2,4];
+        RD[6,8] = RSUDWsrc[2,4];
+        RDUDW[0,2] = RTUDWsrc[4,6];
+        RDUDW[2,4] = RSUDWsrc[4,6];
+        RDUDW[4,6] = RTUDWsrc[6,8];
+        RDUDW[6,8] = RSUDWsrc[6,8];
+    }
+    :pextuw RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x12 & fct=0x28 {
+        RD[0,4] = RTUDWsrc[0,4];
+        RD[4,8] = RSUDWsrc[0,4];
+        RDUDW[0,4] = RTUDWsrc[4,8];
+        RDUDW[4,8] = RSUDWsrc[4,8];
+    }
+    :phmadh RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x11 & fct=0x9 {
+        product0:4 = sext((RSsrc[2,4] * RTsrc[2,4]) + (RSsrc[0,2] * RTsrc[0,2]));
+        lo[0,4] = product0;
+        RD[0,4] = product0;
+        product1:4 = sext((RSsrc[6,8] * RTsrc[6,8]) + (RSsrc[4,6] * RTsrc[4,6]));
+        hi[0,4] = product1;
+        RD[4,8] = product1;
+        product2:4 = sext((RSUDWsrc[2,4] * RTUDWsrc[2,4]) + (RSUDWsrc[0,2] * RTUDWsrc[0,2]));
+        lo1[0,4] = product2;
+        RDUDW[0,4] = product2;
+        product3:4 = sext((RSUDWsrc[6,8] * RTUDWsrc[6,8]) + (RSUDWsrc[4,6] * RTUDWsrc[4,6]));
+        hi1[0,4] = product3;
+        RDUDW[4,8] = product3;
+    }
+    :phmsdh RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x15 & fct=0x9 {
+        product0:4 = sext((RSsrc[2,4] * RTsrc[2,4]) - (RSsrc[0,2] * RTsrc[0,2]));
+        lo[0,4] = product0;
+        RD[0,4] = product0;
+        product1:4 = sext((RSsrc[6,8] * RTsrc[6,8]) - (RSsrc[4,6] * RTsrc[4,6]));
+        hi[0,4] = product1;
+        RD[4,8] = product1;
+        product2:4 = sext((RSUDWsrc[2,4] * RTUDWsrc[2,4]) - (RSUDWsrc[0,2] * RTUDWsrc[0,2]));
+        lo1[0,4] = product2;
+        RDUDW[0,4] = product2;
+        product3:4 = sext((RSUDWsrc[6,8] * RTUDWsrc[6,8]) - (RSUDWsrc[4,6] * RTUDWsrc[4,6]));
+        hi1[0,4] = product3;
+        RDUDW[4,8] = product3;
+    }
+    :pinteh RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0xA & fct=0x29 {
+        RD[0,2] = RTsrc[0,2];
+        RD[2,4] = RSsrc[0,2];
+        RD[4,6] = RTsrc[4,6];
+        RD[6,8] = RSsrc[4,6];
+        RDUDW[0,2] = RTUDWsrc[0,2];
+        RDUDW[2,4] = RSUDWsrc[2,2];
+        RDUDW[4,6] = RTUDWsrc[4,6];
+        RDUDW[6,8] = RSUDWsrc[4,6];
+    }
+    :pinth RD, RSsrc, RTsrc        is RD & RDUDW & RSsrc & RSUDWsrc & RTsrc & mmiop=0xA & fct=0x9 {
+        RD[0,2] = RTsrc[0,2];
+        RD[2,4] = RSUDWsrc[0,2];
+        RD[4,6] = RTsrc[2,4];
+        RD[6,8] = RSUDWsrc[2,4];
+        RDUDW[0,2] = RTsrc[4,6];
+        RDUDW[2,4] = RSUDWsrc[4,6];
+        RDUDW[4,6] = RTsrc[6,8];
+        RDUDW[6,8] = RSUDWsrc[6,8];
+    }
+    :plzcw RD, RSsrc            is RD & RSsrc & rt=0 & mmiop=0 & fct=0x4 {
+        if (RSsrc[0,4] s< 0) goto <lower_ones>;
+        RD[0,4] = countLeadingZeros(RSsrc[0,4]) - 1;
+        goto <upper>;
+        <lower_ones>
+        RD[0,4] = countLeadingOnes(RSsrc[0,4]) - 1;
+        <upper>
+        if (RSsrc[4,8] s< 0) goto <upper_ones>;
+        RD[4,8] = countLeadingZeros(RSsrc[4,8]) - 1;
+        goto <end>;
+        <upper_ones>
+        RD[4,8] = countLeadingOnes(RSsrc[4,8]) - 1;
+        <end>
+    }
+    :pmaddh RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x10 & fct=0x9 {
+        # This is HIDEOUS!
+        tmp1:4 = sext(RSsrc[0,2]);
+        tmp2:4 = sext(RTsrc[0,2]);
+        product0:4 = tmp1 * tmp2;
+        sum0:4 = lo:4 + product0;
+        lo[0,4] = sum0;
+        RD[0,4] = sum0;
+        tmp3:4 = sext(RSsrc[2,4]);
+        tmp4:4 = sext(RTsrc[2,4]);
+        product1:4 = tmp3 * tmp4;
+        tmplo0:4 = lo[4,8];
+        sum1:4 = tmplo0 + product1;
+        lo[4,8] = sum1;
+        tmp5:4 = sext(RSsrc[4,6]);
+        tmp6:4 = sext(RTsrc[4,6]);
+        product2:4 = tmp5 * tmp6;
+        sum2:4 = hi:4 + product2;
+        hi[0,4] = sum2;
+        RD[4,8] = sum2;
+        tmp7:4 = sext(RSsrc[6,8]);
+        tmp8:4 = sext(RTsrc[6,8]);
+        product3:4 = tmp7 * tmp8;
+        tmphi0:4 = hi[4,8];
+        sum3:4 = tmphi0 + product3;
+        hi[4,8] = sum3;
+
+        tmp1_upper:4 = sext(RSUDWsrc[0,2]);
+        tmp2_upper:4 = sext(RTUDWsrc[0,2]);
+        product0_upper:4 = tmp1_upper * tmp2_upper;
+        sum0_upper:4 = lo1:4 + product0_upper;
+        lo1[0,4] = sum0_upper;
+        RDUDW[0,4] = sum0_upper;
+        tmp3_upper:4 = sext(RSUDWsrc[2,4]);
+        tmp4_upper:4 = sext(RTUDWsrc[2,4]);
+        product1_upper:4 = tmp3_upper * tmp4_upper;
+        tmplo1:4 = lo1[4,8];
+        sum1_upper:4 = tmplo1 + product1_upper;
+        lo1[4,8] = sum1_upper;
+        tmp5_upper:4 = sext(RSUDWsrc[4,6]);
+        tmp6_upper:4 = sext(RTUDWsrc[4,6]);
+        product2_upper:4 = tmp5_upper * tmp6_upper;
+        sum2_upper:4 = hi1:4 + product2_upper;
+        hi1[0,4] = sum2_upper;
+        RDUDW[4,8] = sum2_upper;
+        tmp7_upper:4 = sext(RSUDWsrc[6,8]);
+        tmp8_upper:4 = sext(RTUDWsrc[6,8]);
+        product3_upper:4 = tmp7_upper * tmp8_upper;
+        tmphi1:4 = hi1[4,8];
+        sum3_upper:4 = tmphi1 + product3_upper;
+        hi1[4,8] = sum3_upper;
+    }
+    :pmadduw RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x0 & fct=0x29 {
+        # This is HIDEOUS!
+        tmp0:8 = zext(RSsrc[0,4]);
+        tmp1:8 = zext(RTsrc[0,4]);
+        product0:8 = tmp0 * tmp1;
+        lotmp:8 = sext(lo:4);
+        hitmp:8 = sext(hi:4);
+        lo = lotmp + product0;
+        hi = hitmp + product0;
+        RD = product0;
+        tmp2:8 = zext(RSUDWsrc[0,4]);
+        tmp3:8 = zext(RTUDWsrc[0,4]);
+        product1:8 = tmp2 * tmp3;
+        lo1tmp:8 = sext(lo1:4);
+        hi1tmp:8 = sext(hi1:4);
+        lo1 = lo1tmp + product1;
+        hi1 = hi1tmp + product1;
+        RDUDW = product1;
+    }
+    :pmaddw RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x0 & fct=0x9 {
+        # This is HIDEOUS!
+        tmp0:8 = sext(RSsrc[0,4]);
+        tmp1:8 = sext(RTsrc[0,4]);
+        product0:8 = tmp0 * tmp1;
+        lotmp:8 = sext(lo:4);
+        hitmp:8 = sext(hi:4);
+        lo = lotmp + product0;
+        hi = hitmp + product0;
+        RD = product0;
+        tmp2:8 = sext(RSUDWsrc[0,4]);
+        tmp3:8 = sext(RTUDWsrc[0,4]);
+        product1:8 = tmp2 * tmp3;
+        lo1tmp:8 = sext(lo1:4);
+        hi1tmp:8 = sext(hi1:4);
+        lo1 = lo1tmp + product1;
+        hi1 = hi1tmp + product1;
+        RDUDW = product1;
+    }
+    :pmaxh RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x7 & fct=0x8 {
+        setMax(RD[0,2], RSsrc[0,2], RTsrc[0,2]);
+        setMax(RD[2,4], RSsrc[2,4], RTsrc[2,4]);
+        setMax(RD[4,6], RSsrc[4,6], RTsrc[4,6]);
+        setMax(RD[6,8], RSsrc[6,8], RTsrc[6,8]);
+        setMax(RDUDW[0,2], RSUDWsrc[0,2], RTUDWsrc[0,2]);
+        setMax(RDUDW[2,4], RSUDWsrc[2,4], RTUDWsrc[2,4]);
+        setMax(RDUDW[4,6], RSUDWsrc[4,6], RTUDWsrc[4,6]);
+        setMax(RDUDW[6,8], RSUDWsrc[6,8], RTUDWsrc[6,8]);
+    }
+    :pmaxw RD, RSsrc, RTsrc        is RD & RSsrc & RDUDW & RSUDWsrc & RTsrc & RTUDWsrc & mmiop=0x3 & fct=0x8 {
+        setMax(RD[0,4], RSsrc[0,4], RTsrc[0,4]);
+        setMax(RD[4,8], RSsrc[4,8], RTsrc[4,8]);
+        setMax(RDUDW[0,4], RSUDWsrc[0,4], RTUDWsrc[0,4]);
+        setMax(RDUDW[4,8], RSUDWsrc[4,8], RTUDWsrc[4,8]);
+    }
+    :pmfhi RD                       is RD & RDUDW & rs=0 & rt=0 & mmiop=0x8 & fct=0x9 {
+        RD = hi;
+        RDUDW = hi1;
+    }
+    :pmfhl.lh RD                    is RD & RDUDW & rs=0 & rt=0 & mmiop=0x3 & fct=0x30 {
+        RD[0,2] = lo[0,2];
+        RD[2,4] = lo[6,8];
+        RD[4,6] = hi[0,2];
+        RD[6,8] = hi[6,8];
+        RDUDW[0,2] = lo1[0,2];
+        RDUDW[2,4] = lo1[6,8];
+        RDUDW[4,6] = hi1[0,2];
+        RDUDW[6,8] = hi1[6,8];
+    }
+    :pmfhl.lw RD                    is RD & RDUDW & rs=0 & rt=0 & mmiop=0x0 & fct=0x30 {
+        RD[0,4] = lo[0,4];
+        RD[4,8] = hi[0,4];
+        RDUDW[0,4] = lo1[0,4];
+        RDUDW[4,8] = hi1[0,4];
+    }
+    :pmfhl.sh RD                    is RD & RDUDW & rs=0 & rt=0 & mmiop=0x4 & fct=0x30 {
+        clampWord(RD[0,2], lo[0,4]);
+        clampWord(RD[2,4], lo[4,8]);
+        clampWord(RD[4,6], hi[0,4]);
+        clampWord(RD[6,8], hi[4,8]);
+        clampWord(RDUDW[0,2], lo1[0,4]);
+        clampWord(RDUDW[2,4], lo1[4,8]);
+        clampWord(RDUDW[4,6], hi1[0,4]);
+        clampWord(RDUDW[6,8], hi1[4,8]);
+    }
+    :pmfhl.slw RD                    is RD & RDUDW & rs=0 & rt=0 & mmiop=0x2 & fct=0x30 {
+        tmp0:8 = sext(lo:4 | hi:4);
+        tmp1:8 = sext(lo1:4 | hi1:4);
+        clampLongWordSext(RD, tmp0);
+        clampLongWordSext(RDUDW, tmp1);
+    }
+    :pmfhl.uw RD                    is RD & RDUDW & rs=0 & rt=0 & mmiop=0x1 & fct=0x30 {
+        RD[0,4] = lo[4,8];
+        RD[4,8] = hi[4,8];
+        RDUDW[0,4] = lo1[4,8];
+        RDUDW[4,8] = hi1[4,8];
+    }
+    :pmflo RD                       is RD & RDUDW & rs=0 & rt=0 & mmiop=0x9 & fct=0x9 {
+        RD = lo;
+        RDUDW = lo1;
+    }
+    :pminh RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x7 & fct=0x28 {
+        setMin(RD[0,2], RSsrc[0,2], RTsrc[0,2]);
+        setMin(RD[2,4], RSsrc[2,4], RTsrc[2,4]);
+        setMin(RD[4,6], RSsrc[4,6], RTsrc[4,6]);
+        setMin(RD[6,8], RSsrc[6,8], RTsrc[6,8]);
+        setMin(RDUDW[0,2], RSUDWsrc[0,2], RTUDWsrc[0,2]);
+        setMin(RDUDW[2,4], RSUDWsrc[2,4], RTUDWsrc[2,4]);
+        setMin(RDUDW[4,6], RSUDWsrc[4,6], RTUDWsrc[4,6]);
+        setMin(RDUDW[6,8], RSUDWsrc[6,8], RTUDWsrc[6,8]);
+    }
+    :pminw RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x3 & fct=0x28 {
+        setMin(RD[0,4], RSsrc[0,4], RTsrc[0,4]);
+        setMin(RD[4,8], RSsrc[4,8], RTsrc[4,8]);
+        setMin(RDUDW[0,4], RSUDWsrc[0,4], RTUDWsrc[0,4]);
+        setMin(RDUDW[4,8], RSUDWsrc[4,8], RTUDWsrc[4,8]);
+    }
+    :pmsubh RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x14 & fct=0x9 {
+        # This is HIDEOUS!
+        tmp1:4 = sext(RSsrc[0,2]);
+        tmp2:4 = sext(RTsrc[0,2]);
+        product0:4 = tmp1 * tmp2;
+        sum0:4 = lo:4 - product0;
+        lo[0,4] = sum0;
+        RD[0,4] = sum0;
+        tmp3:4 = sext(RSsrc[2,4]);
+        tmp4:4 = sext(RTsrc[2,4]);
+        product1:4 = tmp3 * tmp4;
+        tmplo0:4 = lo[4,8];
+        sum1:4 = tmplo0 - product1;
+        lo[4,8] = sum1;
+        tmp5:4 = sext(RSsrc[4,6]);
+        tmp6:4 = sext(RTsrc[4,6]);
+        product2:4 = tmp5 * tmp6;
+        sum2:4 = hi:4 - product2;
+        hi[0,4] = sum2;
+        RD[4,8] = sum2;
+        tmp7:4 = sext(RSsrc[6,8]);
+        tmp8:4 = sext(RTsrc[6,8]);
+        product3:4 = tmp7 * tmp8;
+        tmphi0:4 = hi[4,8];
+        sum3:4 = tmphi0 - product3;
+        hi[4,8] = sum3;
+
+        tmp1_upper:4 = sext(RSUDWsrc[0,2]);
+        tmp2_upper:4 = sext(RTUDWsrc[0,2]);
+        product0_upper:4 = tmp1_upper * tmp2_upper;
+        sum0_upper:4 = lo1:4 - product0_upper;
+        lo1[0,4] = sum0_upper;
+        RDUDW[0,4] = sum0_upper;
+        tmp3_upper:4 = sext(RSUDWsrc[2,4]);
+        tmp4_upper:4 = sext(RTUDWsrc[2,4]);
+        product1_upper:4 = tmp3_upper * tmp4_upper;
+        tmplo1:4 = lo1[4,8];
+        sum1_upper:4 = tmplo1 - product1_upper;
+        lo1[4,8] = sum1_upper;
+        tmp5_upper:4 = sext(RSUDWsrc[4,6]);
+        tmp6_upper:4 = sext(RTUDWsrc[4,6]);
+        product2_upper:4 = tmp5_upper * tmp6_upper;
+        sum2_upper:4 = hi1:4 - product2_upper;
+        hi1[0,4] = sum2_upper;
+        RDUDW[4,8] = sum2_upper;
+        tmp7_upper:4 = sext(RSUDWsrc[6,8]);
+        tmp8_upper:4 = sext(RTUDWsrc[6,8]);
+        product3_upper:4 = tmp7_upper * tmp8_upper;
+        tmphi1:4 = hi1[4,8];
+        sum3_upper:4 = tmphi1 - product3_upper;
+        hi1[4,8] = sum3_upper;
+    }
+    :pmsubw RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x4 & fct=0x9 {
+        # This is HIDEOUS!
+        tmp0:8 = sext(RSsrc[0,4]);
+        tmp1:8 = sext(RTsrc[0,4]);
+        product0:8 = tmp0 * tmp1;
+        lotmp:8 = sext(lo:4);
+        hitmp:8 = sext(hi:4);
+        lo = lotmp - product0;
+        hi = hitmp - product0;
+        RD = product0;
+        tmp2:8 = sext(RSUDWsrc[0,4]);
+        tmp3:8 = sext(RTUDWsrc[0,4]);
+        product1:8 = tmp2 * tmp3;
+        lo1tmp:8 = sext(lo1:4);
+        hi1tmp:8 = sext(hi1:4);
+        lo1 = lo1tmp - product1;
+        hi1 = hi1tmp - product1;
+        RDUDW = product1;
+    }
+    :pmthi RD                       is RD & RDUDW & rs=0 & rt=0 & mmiop=0x8 & fct=0x29 {
+        hi = RD;
+        hi1 = RDUDW;
+    }
+    :pmthl.lw RD                    is RD & RDUDW & rs=0 & rt=0 & mmiop=0x0 & fct=0x31 {
+        lo[0,4] = RD[0,4];
+        hi[0,4] = RD[4,8];
+        lo1[0,4] = RDUDW[0,4];
+        hi1[0,4] = RDUDW[4,8];
+    }
+    :pmtlo RD                       is RD & RDUDW & rs=0 & rt=0 & mmiop=0x9 & fct=0x29 {
+        lo = RD;
+        lo1 = RDUDW;
+    }
+    :pmulth RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x1C & fct=0x9 {
+        # This is HIDEOUS!
+        product0:4 = 0;
+        product1:4 = 0;
+        product2:4 = 0;
+        product3:4 = 0;
+        product4:4 = 0;
+        product5:4 = 0;
+        product6:4 = 0;
+        product7:4 = 0;
+        multToSignedWord(product0, RSsrc[0,2], RTsrc[0,2]);
+        multToSignedWord(product1, RSsrc[2,4], RTsrc[2,4]);
+        multToSignedWord(product2, RSsrc[4,6], RTsrc[4,6]);
+        multToSignedWord(product3, RSsrc[6,8], RTsrc[6,8]);
+        multToSignedWord(product4, RSUDWsrc[0,2], RTUDWsrc[0,2]);
+        multToSignedWord(product5, RSUDWsrc[2,4], RTUDWsrc[2,4]);
+        multToSignedWord(product6, RSUDWsrc[4,6], RTUDWsrc[4,6]);
+        multToSignedWord(product7, RSUDWsrc[6,8], RTUDWsrc[6,8]);
+        lo[0,4] = product0;
+        RD[0,4] = product0;
+        lo[4,8] = product1;
+        hi[0,4] = product2;
+        RD[4,8] = product2;
+        hi[4,8] = product3;
+        lo1[0,4] = product4;
+        RDUDW[0,4] = product4;
+        lo1[4,8] = product5;
+        RDUDW[4,8] = product6;
+        hi1[0,4] = product6;
+        hi1[4,8] = product7;
+    }
+    :pmultuw RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0xC & fct=0x29 {
+        RD_tmp:8 = 0;
+        RD_tmp1:8 = 0;
+        tmp0:8 = zext(lo:4 | hi:4);
+        tmp1:8 = zext(lo1:4 | hi1:4);
+        clampLongWordZext(RD_tmp1, tmp0);
+        clampLongWordZext(RD_tmp, tmp1);
+        RD = RD_tmp1;
+        RDUDW = RD_tmp;
+        lo = sext(RD_tmp1[0,4]);
+        hi = sext(RD_tmp1[4,8]);
+        lo1 = sext(RD_tmp[0,4]);
+        hi1 = sext(RD_tmp[4,8]);
+    }
+    :pnor RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x13 & fct=0x29 {
+        RD = ~(RSsrc | RTsrc);
+        RDUDW = ~(RSUDWsrc | RTUDWsrc);
+    }
+    :por RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x12 & fct=0x29 {
+        RD = (RSsrc | RTsrc);
+        RDUDW = (RSUDWsrc | RTUDWsrc);
+    }
+    :ppac5 RD, RTsrc                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=0x1F & fct=0x8 {
+        mask:4 = 0x80F8F8F8;
+        word0:4 = RTsrc:4;
+        word1:4 = RTsrc[4,8];
+        word2:4 = RTUDWsrc:4;
+        word3:4 = RTUDWsrc[4,8];
+        word0 = (word0 & mask);
+        word1 = (word1 & mask);
+        word2 = (word2 & mask);
+        word3 = (word3 & mask);
+        RD[0,4] = word0;
+        RD[4,8] = word1;
+        RDUDW[0,4] = word2;
+        RDUDW[4,8] = word3;
+    }
+    :ppacb RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x1B & fct=0x8 {
+        RD[0,1] = RTsrc[0,1];
+        RD[1,2] = RTsrc[2,3];
+        RD[2,3] = RTsrc[4,5];
+        RD[3,4] = RTsrc[6,7];
+        RD[4,5] = RTUDWsrc[0,1];
+        RD[5,6] = RTUDWsrc[2,3];
+        RD[6,7] = RTUDWsrc[4,5];
+        RD[7,8] = RTUDWsrc[6,7];
+        RDUDW[0,1] = RSsrc[0,1];
+        RDUDW[1,2] = RSsrc[2,3];
+        RDUDW[2,3] = RSsrc[4,5];
+        RDUDW[3,4] = RSsrc[6,7];
+        RDUDW[4,5] = RSUDWsrc[0,1];
+        RDUDW[5,6] = RSUDWsrc[2,3];
+        RDUDW[6,7] = RSUDWsrc[4,5];
+        RDUDW[7,8] = RSUDWsrc[6,7];
+    }
+    :ppach RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x17 & fct=0x8 {
+        RD[0,2] = RTsrc[0,2];
+        RD[2,4] = RTsrc[4,6];
+        RD[4,6] = RTUDWsrc[0,2];
+        RD[6,8] = RTUDWsrc[4,6];
+        RDUDW[0,2] = RSsrc[0,2];
+        RDUDW[2,4] = RSsrc[4,6];
+        RDUDW[4,6] = RSUDWsrc[0,2];
+        RDUDW[6,8] = RSUDWsrc[4,6];
+    }
+    :ppacw RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x13 & fct=0x8 {
+        RD[0,4] = RTsrc[0,4];
+        RD[4,8] = RTUDWsrc[0,4];
+        RDUDW[0,4] = RSsrc[0,4];
+        RDUDW[4,8] = RSUDWsrc[0,4];
+    }
+    :prevh RD, RTsrc                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=0x1B & fct=0x9 {
+        RD[0,2] = RTsrc[6,8];
+        RD[2,4] = RTsrc[4,6];
+        RD[4,6] = RTsrc[2,4];
+        RD[6,8] = RTsrc[0,2];
+        RDUDW[0,2] = RTUDWsrc[6,8];
+        RDUDW[2,4] = RTUDWsrc[4,6];
+        RDUDW[4,6] = RTUDWsrc[2,4];
+        RDUDW[6,8] = RTUDWsrc[0,2];
+    }
+    :prot3w RD, RTsrc                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & mmiop=0x1F & fct=0x9 {
+        RD[0,4] = RTsrc[4,8];
+        RD[4,8] = RTUDWsrc[4,8];
+        RDUDW[0,4] = RTsrc[0,4];
+        RDUDW[4,8] = RTUDWsrc[4,8];
+    }
+    :psllh RD, RTsrc, sa                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & sa & fct=0x34 {
+        RD[0,2] = RTsrc[0,1] << sa;
+        RD[2,4] = RTsrc[2,3] << sa;
+        RD[4,6] = RTsrc[4,5] << sa;
+        RD[6,8] = RTsrc[6,7] << sa;
+        RDUDW[0,2] = RTUDWsrc[0,1] << sa;
+        RDUDW[2,4] = RTUDWsrc[2,3] << sa;
+        RDUDW[4,6] = RTUDWsrc[4,5] << sa;
+        RDUDW[6,8] = RTUDWsrc[6,7] << sa;
+    }
+    :psllvw RD, RS32src, RT32src        is RD & RDUDW & RS32src & RSUDWsrc & RT32src & RTUDWsrc & mmiop=0x2 & fct=0x9 {
+        mask:4 = 0x1F;
+        s:4 = RS32src & mask;
+        t:4 = RSUDWsrc:4 & mask;
+        RD = sext(RT32src << s);
+        RDUDW = sext(RTUDWsrc:4 << t);
+    }
+    :psllw RD, RTsrc, sa                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & sa & fct=0x3C {
+        RD[0,4] = zext(RTsrc[0,2]) << sa:4;
+        RD[4,8] = zext(RTsrc[4,6]) << sa:4;
+        RDUDW[0,4] = zext(RTUDWsrc[0,2]) << sa:4;
+        RDUDW[4,8] = zext(RTUDWsrc[4,6]) << sa:4;
+    }
+    :psrah RD, RTsrc, sa                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & sa & fct=0x37 {
+        RD[0,2] = sext(RTsrc[0,1] s>> sa:1);
+        RD[2,4] = sext(RTsrc[2,3] s>> sa:1);
+        RD[4,6] = sext(RTsrc[4,5] s>> sa:1);
+        RD[6,8] = sext(RTsrc[6,7] s>> sa:1);
+        RDUDW[0,2] = sext(RTUDWsrc[0,1] s>> sa:1);
+        RDUDW[2,4] = sext(RTUDWsrc[2,3] s>> sa:1);
+        RDUDW[4,6] = sext(RTUDWsrc[4,5] s>> sa:1);
+        RDUDW[6,8] = sext(RTUDWsrc[6,7] s>> sa:1);
+    }
+    :psravw RD, RT32src, RS32src  is RD & RT32src & RDUDW & RTUDWsrc & RS32src & RSUDWsrc & mmiop=3 & fct=0x29 {
+        mask:4 = 0x1F;
+        s:4 = RS32src & mask;
+        t:4 = RSUDWsrc:4 & mask;
+        RD = sext(RT32src s>> s);
+        RDUDW = sext(RTUDWsrc:4 s>> t);
+    }
+    :psraw RD, RTsrc, sa                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & sa & fct=0x3F {
+        RD[0,4] = sext(RTsrc[2,4] s>> sa:2);
+        RD[4,8] = sext(RTsrc[6,8] s>> sa:2);
+        RDUDW[0,4] = sext(RTUDWsrc[2,4] s>> sa:2);
+        RDUDW[4,8] = sext(RTUDWsrc[6,8] s>> sa:2);
+    }
+    :psrlh RD, RTsrc, sa                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & sa & fct=0x36 {
+        RD[0,2] = zext(RTsrc[0,1] >> sa:1);
+        RD[2,4] = zext(RTsrc[2,3] >> sa:1);
+        RD[4,6] = zext(RTsrc[4,5] >> sa:1);
+        RD[6,8] = zext(RTsrc[6,7] >> sa:1);
+        RDUDW[0,2] = zext(RTUDWsrc[0,1] >> sa:1);
+        RDUDW[2,4] = zext(RTUDWsrc[2,3] >> sa:1);
+        RDUDW[4,6] = zext(RTUDWsrc[4,5] >> sa:1);
+        RDUDW[6,8] = zext(RTUDWsrc[6,7] >> sa:1);
+    }
+    :psrlvw RD, RT32src, RS32src  is RD & RT32src & RDUDW & RTUDWsrc & RS32src & RSUDWsrc & mmiop=3 & fct=0x9 {
+        mask:4 = 0x1F;
+        s:4 = RS32src & mask;
+        t:4 = RSUDWsrc:4 & mask;
+        RD = zext(RT32src >> s);
+        RDUDW = zext(RTUDWsrc:4 >> t);
+    }
+    :psrlw RD, RTsrc, sa                is RD & RTsrc & RDUDW & RTUDWsrc & rs=0 & sa & fct=0x3E {
+        RD[0,4] = zext(RTsrc[2,4] >> sa:2);
+        RD[4,8] = zext(RTsrc[6,8] >> sa:2);
+        RDUDW[0,4] = zext(RTUDWsrc[2,4] >> sa:2);
+        RDUDW[4,8] = zext(RTUDWsrc[6,8] >> sa:2);
+    }
+    :psubb RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=9 & fct=8 {
+        RD[0,1] = RSsrc[0,1] - RTsrc[0,1];
+        RD[1,2] = RSsrc[1,2] - RTsrc[1,2];
+        RD[2,3] = RSsrc[2,3] - RTsrc[2,3];
+        RD[3,4] = RSsrc[3,4] - RTsrc[3,4];
+        RD[4,5] = RSsrc[4,5] - RTsrc[4,5];
+        RD[5,6] = RSsrc[5,6] - RTsrc[5,6];
+        RD[6,7] = RSsrc[6,7] - RTsrc[6,7];
+        RD[7,8] = RSsrc[7,8] - RTsrc[7,8];
+        RDUDW[0,1] = RSUDWsrc[0,1] - RTUDWsrc[0,1];
+        RDUDW[1,2] = RSUDWsrc[1,2] - RTUDWsrc[1,2];
+        RDUDW[2,3] = RSUDWsrc[2,3] - RTUDWsrc[2,3];
+        RDUDW[3,4] = RSUDWsrc[3,4] - RTUDWsrc[3,4];
+        RDUDW[4,5] = RSUDWsrc[4,5] - RTUDWsrc[4,5];
+        RDUDW[5,6] = RSUDWsrc[5,6] - RTUDWsrc[5,6];
+        RDUDW[6,7] = RSUDWsrc[6,7] - RTUDWsrc[6,7];
+        RDUDW[7,8] = RSUDWsrc[7,8] - RTUDWsrc[7,8];
+    }
+    :psubuh RD, RSsrc, RTsrc             is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x15 & fct=0x28 {
+        uSatHalfWord(RD[0,2], RSsrc[0,2] - RTsrc[0,2]);
+        uSatHalfWord(RD[2,4], RSsrc[2,3] - RTsrc[2,4]);
+        uSatHalfWord(RD[4,6], RSsrc[4,6] - RTsrc[4,6]);
+        uSatHalfWord(RD[6,8], RSsrc[6,8] - RTsrc[6,8]);
+        uSatHalfWord(RDUDW[0,2], RSUDWsrc[0,2] - RTUDWsrc[0,1]);
+        uSatHalfWord(RDUDW[2,4], RSUDWsrc[2,4] - RTUDWsrc[2,4]);
+        uSatHalfWord(RDUDW[4,6], RSUDWsrc[4,6] - RTUDWsrc[4,6]);
+        uSatHalfWord(RDUDW[6,8], RSUDWsrc[6,8] - RTUDWsrc[6,8]);
+    }
+    :psubuw RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & RTUDWsrc & RSUDWsrc & mmiop=0x11 & fct=0x28 {
+        uSatWord(RD[0,4], RSsrc[0,4] - RTsrc[0,4]);
+        uSatWord(RD[4,8], RSsrc[4,8] - RTsrc[4,8]);
+        uSatWord(RDUDW[0,4], RSUDWsrc[0,4] - RTUDWsrc[0,4]);
+        uSatWord(RDUDW[4,8], RSUDWsrc[4,8] - RTUDWsrc[4,8]);
+    }
+    :psubw RD, RSsrc, RTsrc     is RD & RSsrc & RTsrc & RDUDW & RTUDWsrc & RSUDWsrc & mmiop=1 & fct=0x8 {
+        RD[0,4] = RSsrc[0,4] - RTsrc[0,4];
+        RD[4,8] = RSsrc[4,8] - RTsrc[4,8];
+        RDUDW[0,4] = RSUDWsrc[0,4] - RTUDWsrc[0,4];
+        RDUDW[4,8] = RSUDWsrc[4,8] - RTUDWsrc[4,8];
+    }
+    :pxor RD, RSsrc, RTsrc        is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x13 & fct=0x9 {
+        RD = (RSsrc ^ RTsrc);
+        RDUDW = (RSUDWsrc ^ RTUDWsrc);
+    }
+
+    ### CHECK ME! ###
+    :qfsrv RD, RSsrc, RTsrc       is RD & RSsrc & RTsrc & RDUDW & RSUDWsrc & RTUDWsrc & mmiop=0x1B & fct=0x28 {
+        if (fsa == 0) goto <special_case>;
+        tmp0:8 = RTsrc >> fsa;
+        tmp1:8 = RTUDWsrc >> fsa;
+        bottom:8 = (((tmp1 << fsa) ^ RTUDWsrc) << fsa) | tmp0;
+        tmp0 = RSsrc >> fsa;
+        low:8 = (((tmp0 << fsa) ^ RSUDWsrc) << fsa) | tmp1;
+        tmp1 = RSUDWsrc >> fsa;
+        RD = low | bottom;
+        RDUDW = (((tmp1 << fsa) ^ RSUDWsrc) << fsa) | tmp0;
+        goto <end>;
+        <special_case>
+        RD = RTsrc;
+        RDUDW = RTUDWsrc;
+        <end>
     }
-
-
-    # PSUBW
-    :psubw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=1 & fct=8 {
-        RD128 = PSUBW(RS128src, RT128src);
-    }
-
-
-    # PCGTW
-    :pcgtw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=2 & fct=8 {
-        RD128 = PCGTW(RS128src, RT128src);
-    }
-
-
-    # PMAXW
-    :pmaxw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=3 & fct=8 {
-        RD128 = PMAXW(RS128src, RT128src);
-    }
-
-
-    # PADDH
-    :paddh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=4 & fct=8 {
-        RD128 = PADDH(RS128src, RT128src);
-    }
-
-
-    # PSUBH
-    :psubh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=5 & fct=8 {
-        RD128 = PSUBH(RS128src, RT128src);
-    }
-
-
-    # PCGTH
-    :pcgth RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=6 & fct=8 {
-        RD128 = PCGTH(RS128src, RT128src);
-    }
-
-
-    # PMAXH
-    :pmaxh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=7 & fct=8 {
-        RD128 = PMAXH(RS128src, RT128src);
-    }
-
-
-    # PADDB
-    :paddb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=8 & fct=8 {
-        RD128 = PADDB(RS128src, RT128src);
-    }
-
-
-    # PSUBB
-    :psubb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=9 & fct=8 {
-        RD128 = PSUBB(RS128src, RT128src);
-    }
-
-
-    # PCGTB
-    :pcgtb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=10 & fct=8 {
-        RD128 = PCGTB(RS128src, RT128src);
-    }
-
-
-    # PADDSW
-    :paddsw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=16 & fct=8 {
-        RD128 = PADDSW(RS128src, RT128src);
-    }
-
-
-    # PSUBSW
-    :psubsw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=17 & fct=8 {
-        RD128 = PSUBSW(RS128src, RT128src);
-    }
-
-
-    # PEXTLW
-    :pextlw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=18 & fct=8 {
-        RD128 = PEXTLW(RS128src, RT128src);
-    }
-
-
-    # PPACW
-    :ppacw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=19 & fct=8 {
-        RD128 = PPACW(RS128src, RT128src);
-    }
-
-
-    # PADDSH
-    :paddsh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=20 & fct=8 {
-        RD128 = PADDSH(RS128src, RT128src);
-    }
-
-
-    # PSUBSH
-    :psubsh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=21 & fct=8 {
-        RD128 = PSUBSH(RS128src, RT128src);
-    }
-
-
-    # PEXTLH
-    :pextlh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=22 & fct=8 {
-        RD128 = PEXTLH(RS128src, RT128src);
-    }
-
-
-    # PPACH
-    :ppach RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=23 & fct=8 {
-        RD128 = PPACH(RS128src, RT128src);
-    }
-
-
-    # PADDSB
-    :paddsb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=24 & fct=8 {
-        RD128 = PADDSB(RS128src, RT128src);
-    }
-
-
-    # PSUBSB
-    :psubsb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=25 & fct=8 {
-        RD128 = PSUBSB(RS128src, RT128src);
-    }
-
-
-    # PEXTLB
-    :pextlb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=26 & fct=8 {
-        RD128 = PEXTLB(RS128src, RT128src);
-    }
-
-    # PPACB
-    :ppacb RD128, RS128src, RT128src                 is RS128src & RD128 & RT128src & mmiop=27 & fct=8 {
-        RD128 = PPACB(RS128src, RT128src);
-    }
-
-    # PEXT5
-    :pext5 RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=30 & fct=8 {
-        RD128 = PEXT5(RT128src);
-    }
-
-    # PPAC5
-    :ppac5 RD128, RT128src                          is rs=0 & RD128 & RT128src & mmiop=31 & fct=8 {
-        RD128 = PPAC5(RT128src);
-    }
-
-    # PABSW
-    :pabsw RD128, RT128src                          is rs=0 & RD128 & RT128src & mmiop=1 & fct=40 {
-        RD128 = PABSW(RT128src);
-    }
-
-    # PCEQW
-    :pceqw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=2 & fct=40 {
-        RD128 = PCEQW(RS128src, RT128src);
-    }
-
-
-    # PMINW
-    :pminw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=3 & fct=40 {
-        RD128 = PMINW(RS128src, RT128src);
-    }
-
-
-    # PADSBH
-    :padsbh RD128, RS128src, RT128src               is RS128src & RD128 & RT128src & mmiop=4 & fct=40 {
-        RD128 = PADSBH(RS128src, RT128src);
-    }
-
-
-    # PABSH
-    :pabsh RD128, RT128src                          is rs=0 & RD128 & RT128src & mmiop=5 & fct=40 {
-        RD128 = PABSH(RT128src);
-    }
-
-
-    # PCEQH
-    :pceqh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=6 & fct=40 {
-        RD128 = PCEQH(RS128src, RT128src);
-    }
-
-
-    # PMINH
-    :pminh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=7 & fct=40 {
-        RD128 = PMINH(RS128src, RT128src);
-    }
-
-
-    # PCEQB
-    :pceqb RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=10 & fct=40 {
-        RD128 = PCEQB(RS128src, RT128src);
-    }
-
-
-    # PADDUW
-    :padduw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=16 & fct=40 {
-        RD128 = PADDUW(RS128src, RT128src);
-    }
-
-
-    # PSUBUW
-    :psubuw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=17 & fct=40 {
-        RD128 = PSUBUW(RS128src, RT128src);
-    }
-
-
-    # PEXTUW
-    :pextuw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=18 & fct=40 {
-        RD128 = PEXTUW(RS128src, RT128src);
-    }
-
-
-    # PADDUH
-    :padduh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=20 & fct=40 {
-        RD128 = PADDUH(RS128src, RT128src);
-    }
-
-
-    # PSUBUH
-    :psubuh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=21 & fct=40 {
-        RD128 = PSUBUH(RS128src, RT128src);
-    }
-
-
-    # PEXTUH
-    :pextuh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=22 & fct=40 {
-        RD128 = PEXTUH(RS128src, RT128src);
-    }
-
-
-    # PADDUB
-    :paddub RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=24 & fct=40 {
-        RD128 = PADDUB(RS128src, RT128src);
-    }
-
-
-    # PSUBUB
-    :psubub RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=25 & fct=40 {
-        RD128 = PSUBUB(RS128src, RT128src);
-    }
-
-
-    # PEXTUB
-    :pextub RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=26 & fct=40 {
-        RD128 = PEXTUB(RS128src, RT128src);
-    }
-
-
-    # QFSRV
-    :qfsrv RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=27 & fct=40 {
-        RD128 = QFSRV(RS128src, RT128src, fsa);
-    }
-
-
-    # PMADDW
-    :pmaddw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=0 & fct=9 {
-        RD128 = PMADDW(RS128src, RT128src);
-    }
-
-
-    # PSLLVW
-    :psllvw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=2 & fct=9 {
-        RD128 = PSLLVW(RS128src, RT128src);
-    }
-
-
-    # PSRLVW
-    :psrlvw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=3 & fct=9 {
-        RD128 = PSRLVW(RS128src, RT128src);
-    }
-
-
-    # PMSUBW
-    :pmsubw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=4 & fct=9 {
-        RD128 = PMSUBW(RS128src, RT128src);
-    }
-
-
-    # PMFHI
-    :pmfhi RD128                                     is rs=0 & RD128 & rt=0 & mmiop=8 & fct=9 {
-        RD128 = PMFHI();
-    }
-
-
-    # PMFLO
-    :pmflo RD128                                     is rs=0 & RD128 & rt=0 & mmiop=9 & fct=9 {
-        RD128 = PMFLO();
-    }
-
-
-    # PINTH
-    :pinth RD128, RS128src, RT128src                 is RS128src & RD128 & RT128src & mmiop=10 & fct=9 {
-        RD128 = PINTH(RS128src, RT128src);
-    }
-
-
-    # PMULTW
-    :pmultw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=12 & fct=9 {
-        RD128 = PMULTW(RS128src, RT128src);
-    }
-
-
-    # PDIVW
-    :pdivw RS128src, RT128src                        is RS128src & rd=0 & RT128src & mmiop=13 & fct=9 {
-        PDIVW(RS128src, RT128src);
-    }
-
-
-    # PCPYLD
-    :pcpyld RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=14 & fct=9 {
-        RD128 = PCPYLD(RS128src, RT128src);
-    }
-
-
-    # PMADDH
-    :pmaddh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=16 & fct=9 {
-        RD128 = PMADDH(RS128src, RT128src);
-    }
-
-
-    # PHMADH
-    :phmadh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=17 & fct=9 {
-        RD128 = PHMADH(RS128src, RT128src);
-    }
-
-
-    # PAND
-    :pand RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=18 & fct=9 {
-        RD128 = PAND(RS128src, RT128src);
-    }
-
-
-    # PXOR
-    :pxor RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=19 & fct=9 {
-        RD128 = PXOR(RS128src, RT128src);
-    }
-
-
-    # PMSUBH
-    :pmsubh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=20 & fct=9 {
-        RD128 = PMSUBH(RS128src, RT128src);
-    }
-
-
-    # PHMSBH
-    :phmsbh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=21 & fct=9 {
-        RD128 = PHMSBH(RS128src, RT128src);
-    }
-
-
-    # PEXEH
-    :pexeh RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=26 & fct=9 {
-        RD128 = PEXEH(RT128src);
-    }
-
-
-    # PREVH
-    :prevh RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=27 & fct=9 {
-        RD128 = PREVH(RT128src);
-    }
-
-
-    # PMULTH
-    :pmulth RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=28 & fct=9 {
-        RD128 = PMULTH(RS128src, RT128src);
-    }
-
-
-    # PDIVBW
-    :pdivbw RS128src, RT128src                       is RS128src & rd=0 & RT128src & mmiop=29 & fct=9 {
-        PDIVBW(RS128src, RT128src);
-    }
-
-
-    # PEXEW
-    :pexew RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=30 & fct=9 {
-        RD128 = PEXEW(RT128src);
-    }
-
-
-    # PROT3W
-    :prot3w RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=31 & fct=9 {
-        RD128 = PROT3W(RT128src);
-    }
-
-
-    # PMADDUW
-    :pmadduw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=0 & fct=41 {
-        RD128 = PMADDUW(RS128src, RT128src);
-    }
-
-
-    # PSRAVW
-    :psravw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=3 & fct=41 {
-        RD128 = PSRAVW(RS128src, RT128src);
-    }
-
-
-    # PMTHI
-    :pmthi RD128, RS128src, RT128src                 is RS128src & RD128 & RT128src & mmiop=8 & fct=41 {
-        RD128 = PMTHI(RS128src, RT128src);
-    }
-
-
-    # PMTLO
-    :pmtlo RS128src                                  is RS128src & rd=0 & rt=0 & mmiop=9 & fct=41 {
-        PMTLO(RS128src);
-    }
-
-
-    # PINTEH
-    :pinteh RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=10 & fct=41 {
-        RD128 = PINTEH(RS128src, RT128src);
-    }
-
-
-    # PMULTUW
-    :pmultuw RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=12 & fct=41 {
-        RD128 = PMULTUW(RS128src, RT128src);
-    }
-
-
-    # PDIVUW
-    :pdivuw RS128src, RT128src                        is RS128src & rd=0 & RT128src & mmiop=13 & fct=41 {
-        PDIVUW(RS128src, RT128src);
-    }
-
-
-    # PCPYUD
-    :pcpyud RD128, RS128src, RT128src                is RS128src & RD128 & RT128src & mmiop=14 & fct=41 {
-        RD128 = PCPYUD(RS128src, RT128src);
-    }
-
-
-    # POR
-    :por RD128, RS128src, RT128src                   is RS128src & RD128 & RT128src & mmiop=18 & fct=41 {
-        RD128 = POR(RS128src, RT128src);
-    }
-
-
-    # PNOR
-    :pnor RD128, RS128src, RT128src                  is RS128src & RD128 & RT128src & mmiop=19 & fct=41 {
-        RD128 = PNOR(RS128src, RT128src);
-    }
-
-
-    # PEXCH
-    :pexch RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=26 & fct=41 {
-        RD128 = PEXCH(RT128src);
-    }
-
-
-    # PCPYH
-    :pcpyh RD128, RT128src                          is rs=0 & RD128 & RT128src & mmiop=27 & fct=41 {
-        RD128 = PCPYH(RT128src);
-    }
-
-
-    # PEXCW
-    :pexcw RD128, RT128src                           is rs=0 & RD128 & RT128src & mmiop=30 & fct=41 {
-        RD128 = PEXCW(RT128src);
-    }
-
-    # PLZCW
-    :plzcw RD128, RS128src                          is RS128src & RD128 & rt=0 & mmiop=0 & fct=4 {
-        RD128 = PLZCW(RS128src);
-    }
-
-    # PMFHL.LH
-    :pmfhl.lh RD128                                 is RD128 & rs=0 & rt=0 & fmt=3 & fct=48 {
-        PMFHL.LH(RD128);
-    }
-
-    # PMFHL.LW
-    :pmfhl.lw RD128                                 is RD128 & rs=0 & rt=0 & fmt=0 & fct=48 {
-        PMFHL.LW(RD128);
-    }
-
-    # PMFHL.SH
-    :pmfhl.sh RD128                                 is RD128 & rs=0 & rt=0 & fmt=4 & fct=48 {
-        PMFHL.SH(RD128);
-    }
-
-    # PMFHL.SLW
-    :pmfhl.slw RD128                                is RD128 & rs=0 & rt=0 & fmt=2 & fct=48 {
-        PMFHL.SLW(RD128);
-    }
-
-    # PMFHL.UW
-    :pmfhl.slw RD128                                is RD128 & rs=0 & rt=0 & fmt=1 & fct=48 {
-        PMFHL.UW(RD128);
-    }
-
-    # PMTHL
-    :pmthl RS128src                                 is RS128src & rd=0 & rt=0 & fmt=0 & fct=49 {
-        PMTHL(RS128src);
-    }
-
-    #PSLLH
-    :psllh RD128, RT128src, sa                      is rs=0 & RD128 & RT128src & sa & fct=52 {
-        RD128 = PSLLH(RT128src, sa:1);
-    }
-
-    #PSRLH
-    :psrlh RD128, RT128src, sa                      is rs=0 & RD128 & RT128src & sa & fct=54 {
-        RD128 = PSRLH(RT128src, sa:1);
-    }
-
-    #PSRAH
-    :psrah RD128, RT128src, sa                      is rs=0 & RD128 & RT128src & sa & fct=55 {
-        RD128 = PSRAH(RT128src, sa:1);
-    }
-
-    #PSLLW
-    :psllw RD128, RT128src, sa                      is rs=0 & RD128 & RT128src & sa & fct=60 {
-        RD128 = PSLLW(RT128src, sa:1);
-    }
-
-    #PSRLW
-    :psrlw RD128, RT128src, sa                      is rs=0 & RD128 & RT128src & sa & fct=62 {
-        RD128 = PSRLW(RT128src, sa:1);
-    }
-
-    #PSRAW
-    :psraw RD128, RT128src, sa                      is rs=0 & RD128 & RT128src & sa & fct=63 {
-        RD128 = PSRAW(RT128src, sa:1);
-    }
-
-
 }

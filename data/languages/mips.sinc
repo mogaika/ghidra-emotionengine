@@ -240,7 +240,7 @@ define pcodeop syscall;
 }
 
 # Special Case, does nothing. Unwanted outputs are occasionally have RD as the zero register
-:dsra32 RD, RTsrc, sa           		is prime=0 & fct=63 & rs=0 & RTsrc & RD & rd=0 & sa {}
+:dsra32 RD, RTsrc, sa           		is prime=0 & fct=63 & RTsrc & RD & rd=0 & sa {}
 
 # 0000 00ss ssst tttt dddd d000 0001 0111
 :dsrav RD, RTsrc, RSsrc         		is prime=0 & fct=23 & RSsrc & RTsrc & RD & sa=0 {
