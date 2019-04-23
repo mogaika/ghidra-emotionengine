@@ -21,74 +21,79 @@
           <entry size="8" alignment="4" />
      </size_alignment_map>
   </data_organization>
-  <stackpointer register="sp_lo" space="ram" growth="negative"/>
+  <stackpointer register="sp_lo" space="ram"/>
   <funcptr align="2"/>
   <spacebase name="gp" register="gp_lo" space="ram"/>
+  <spacebase name="frame" register="fp" space="stack"/>
   <global>
-    <!-- Unsure if the fp needs to be here or not -->
     <range space="gp"/>
     <range space="ram"/>
     <range space="register" first="0x2000" last="0x2fff"/>
   </global>
   <aggressivetrim signext="true"/>  <!-- Aggressively try to eliminate sign extensions -->
   <returnaddress>
-    <register name="ra"/>
+    <register name="ra_lo"/>
   </returnaddress>
   <default_proto>
-    <prototype name="__stdcall" extrapop="0x10" stackshift="0x10">
+    <prototype name="__stdcall" extrapop="unknown" stackshift="0x10">
       <input killedbycall="true">  <!-- assume parameter passing register locations are killedbycall -->
-        <pentry minsize="1" maxsize="4" metatype="float">
+        <pentry minsize="1" maxsize="4" metatype="float" extension="float">
           <register name="f12"/>
         </pentry>
-        <pentry minsize="1" maxsize="4" metatype="float">
-          <register name="f13"/>
-        </pentry>
-        <pentry minsize="1" maxsize="4" metatype="float">
+        <pentry minsize="1" maxsize="4" metatype="float" extension="float">
           <register name="f14"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="4" metatype="float" extension="float">
+          <register name="f16"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4" metatype="float" extension="float">
+          <register name="f18"/>
+        </pentry>
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="a0"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="a1"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="a2"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="a3"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="t0"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="t1"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="t2"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="t3"/>
         </pentry>
         <pentry minsize="1" maxsize="500" align="0x10">
-          <addr offset="0x10" space="stack"/>
+          <addr offset="0" space="stack"/>
         </pentry>
       </input>
-      <output>
+      <output killedbycall="true">
         <pentry minsize="4" maxsize="4" metatype="float">
           <register name="f0"/>
         </pentry>
         <pentry minsize="4" maxsize="4" metatype="float">
           <register name="f2"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="v0"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="sign">
+        <pentry minsize="1" maxsize="8" extension="inttype">
           <register name="v1"/>
         </pentry>
       </output>
       <unaffected>
+        <register name="ra"/>
+        <register name="fp"/>
         <register name="s0"/>
         <register name="s1"/>
         <register name="s2"/>
@@ -97,22 +102,33 @@
         <register name="s5"/>
         <register name="s6"/>
         <register name="s7"/>
-        <register name="fp"/>
-        <register name="sp"/>
-        <register name="gp"/>
-        <register name="f20"/>   <!-- Only 6 "even" floating pointer registers are saved by callee -->
+        <register name="f20"/>
         <register name="f22"/>
         <register name="f24"/>
         <register name="f26"/>
         <register name="f28"/>
         <register name="f30"/>
       </unaffected>
-      <likelytrash>
+      <killedbycall>
         <register name="t4"/>
         <register name="t5"/>
         <register name="t6"/>
         <register name="t7"/>
+        <register name="f4"/>
+        <register name="f6"/>
+        <register name="f8"/>
+        <register name="f10"/>
+        <register name="f12"/>
+      </killedbycall>
+      <likelytrash>
+        <register name="t8"/>
+        <register name="t9"/>
+        <register name="k0"/>
+        <register name="k1"/>
       </likelytrash>
+      <localrange>
+        <range space="frame"/>
+      </localrange>
     </prototype>
   </default_proto>
 </compiler_spec>
