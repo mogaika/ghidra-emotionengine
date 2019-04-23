@@ -40,6 +40,10 @@ define register offset=0x400 size=8 [ fsa ];       # 64 bit
     fsa = tmp * 16;
 }
 
+:clear fsa                         is prime=1 & fsa & rs=0 & copfct=25 & immed=0 {
+    fsa=0;
+}
+
 :mult RD, RS32src, RT32src                  is prime=0 & RD & RS32src & RT32src & zero5=0 & fct=24 {
     tmp1:8 = sext(RS32src);
     tmp2:8 = sext(RT32src);
@@ -193,6 +197,11 @@ with : prime=28 {
         hi1 = RSsrc;
     }
 
+    # 0111 00ss sss0 0000 0000 0000 0001 0001
+    :clear hi1                                     is RSsrc & hi1 & rs=0 & rt=0 & rd=0 & zero5=0 & fct=17 {
+        hi1 = 0;
+    }
+
     # 0111 0000 0000 0000 dddd d000 0001 0010
     :mflo1 RD                                        is RD & rs=0 & rt=0 & zero5=0 & fct=18 {
         RD = lo1;
@@ -201,6 +210,11 @@ with : prime=28 {
     # 0111 00ss sss0 0000 0000 0000 0001 0011
     :mtlo1 RSsrc                                     is RSsrc & rt=0 & rd=0 & zero5=0 & fct=19 {
         lo1 = RSsrc;
+    }
+
+    # 0111 00ss sss0 0000 0000 0000 0001 0011
+    :clear lo1                                     is RSsrc & lo1 & rs=0 & rt=0 & rd=0 & zero5=0 & fct=19 {
+        lo1 = 0;
     }
 
     :mult1 RD, RS32src, RT32src                      is RD & RS32src & RT32src & zero5=0 & fct=24 {
