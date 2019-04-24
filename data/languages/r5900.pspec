@@ -15,4 +15,238 @@
         <memory_block name="registers.gs"   start_address="0x12000000" length="0x2000"      initialized="false" mode="rwv"/>
         <memory_block name="scratchpad"     start_address="0x70000000" length="0x4000"      initialized="false"/>
     </default_memory_blocks>
+
+    <default_symbols>
+        <symbol name="T0_COUNT" address="ram:10000000" entry="false"/>
+        <symbol name="T0_MODE" address="ram:10000010" entry="false"/>
+        <symbol name="T0_COMP" address="ram:10000020" entry="false"/>
+        <symbol name="T0_HOLD" address="ram:10000030" entry="false"/>
+
+        <symbol name="T1_COUNT" address="ram:10000800" entry="false"/>
+        <symbol name="T1_MODE" address="ram:10000810" entry="false"/>
+        <symbol name="T1_COMP" address="ram:10000820" entry="false"/>
+        <symbol name="T1_HOLD" address="ram:10000830" entry="false"/>
+
+        <symbol name="T2_COUNT" address="ram:10001000" entry="false"/>
+        <symbol name="T2_MODE" address="ram:10001010" entry="false"/>
+        <symbol name="T2_COMP" address="ram:10001020" entry="false"/>
+
+        <symbol name="T3_COUNT" address="ram:10001800" entry="false"/>
+        <symbol name="T3_MODE" address="ram:10001810" entry="false"/>
+        <symbol name="T3_COMP" address="ram:10001820" entry="false"/>
+
+        <symbol name="IPU_CMD" address="ram:10002000" entry="false"/>
+        <symbol name="IPU_CTRL" address="ram:10002010" entry="false"/>
+        <symbol name="IPU_BP" address="ram:10002020" entry="false"/>
+        <symbol name="IPU_TOP" address="ram:10002030" entry="false"/>
+
+        <symbol name="GIF_CTRL" address="ram:10003000" entry="false"/>
+        <symbol name="GIF_MODE" address="ram:10003010" entry="false"/>
+        <symbol name="GIF_STAT" address="ram:10003020" entry="false"/>
+
+        <symbol name="GIF_TAG0" address="ram:10003040" entry="false"/>
+        <symbol name="GIF_TAG1" address="ram:10003050" entry="false"/>
+        <symbol name="GIF_TAG2" address="ram:10003060" entry="false"/>
+        <symbol name="GIF_TAG3" address="ram:10003070" entry="false"/>
+        <symbol name="GIF_CNT" address="ram:10003080" entry="false"/>
+        <symbol name="GIF_P3CNT" address="ram:10003090" entry="false"/>
+        <symbol name="GIF_P3TAG" address="ram:100030A0" entry="false"/>
+
+        <symbol name="VIF0_STAT" address="ram:10003800" entry="false"/>
+        <symbol name="VIF0_FBRST" address="ram:10003810" entry="false"/>
+        <symbol name="VIF0_ERR" address="ram:10003820" entry="false"/>
+        <symbol name="VIF0_MARK" address="ram:10003830" entry="false"/>
+        <symbol name="VIF0_CYCLE" address="ram:10003840" entry="false"/>
+        <symbol name="VIF0_MODE" address="ram:10003850" entry="false"/>
+        <symbol name="VIF0_NUM" address="ram:10003860" entry="false"/>
+        <symbol name="VIF0_MASK" address="ram:10003870" entry="false"/>
+        <symbol name="VIF0_CODE" address="ram:10003880" entry="false"/>
+        <symbol name="VIF0_ITOPS" address="ram:10003890" entry="false"/>
+
+        <symbol name="VIF0_ITOP" address="ram:100038d0" entry="false"/>
+
+        <symbol name="VIF0_R0" address="ram:10003900" entry="false"/>
+        <symbol name="VIF0_R1" address="ram:10003910" entry="false"/>
+        <symbol name="VIF0_R2" address="ram:10003920" entry="false"/>
+        <symbol name="VIF0_R3" address="ram:10003930" entry="false"/>
+        <symbol name="VIF0_C0" address="ram:10003940" entry="false"/>
+        <symbol name="VIF0_C1" address="ram:10003950" entry="false"/>
+        <symbol name="VIF0_C2" address="ram:10003960" entry="false"/>
+        <symbol name="VIF0_C3" address="ram:10003970" entry="false"/>
+
+        <symbol name="VIF1_STAT" address="ram:10003c00" entry="false"/>
+        <symbol name="VIF1_FBRST" address="ram:10003c10" entry="false"/>
+        <symbol name="VIF1_ERR" address="ram:10003c20" entry="false"/>
+        <symbol name="VIF1_MARK" address="ram:10003c30" entry="false"/>
+        <symbol name="VIF1_CYCLE" address="ram:10003c40" entry="false"/>
+        <symbol name="VIF1_MODE" address="ram:10003c50" entry="false"/>
+        <symbol name="VIF1_NUM" address="ram:10003c60" entry="false"/>
+        <symbol name="VIF1_MASK" address="ram:10003c70" entry="false"/>
+        <symbol name="VIF1_CODE" address="ram:10003c80" entry="false"/>
+        <symbol name="VIF1_ITOPS" address="ram:10003c90" entry="false"/>
+        <symbol name="VIF1_BASE" address="ram:10003cA0" entry="false"/>
+        <symbol name="VIF1_OFST" address="ram:10003cB0" entry="false"/>
+        <symbol name="VIF1_TOPS" address="ram:10003cC0" entry="false"/>
+        <symbol name="VIF1_ITOP" address="ram:10003cD0" entry="false"/>
+        <symbol name="VIF1_TOP" address="ram:10003cE0" entry="false"/>
+
+        <symbol name="VIF1_R0" address="ram:10003d00" entry="false"/>
+        <symbol name="VIF1_R1" address="ram:10003d10" entry="false"/>
+        <symbol name="VIF1_R2" address="ram:10003d20" entry="false"/>
+        <symbol name="VIF1_R3" address="ram:10003d30" entry="false"/>
+        <symbol name="VIF1_C0" address="ram:10003d40" entry="false"/>
+        <symbol name="VIF1_C1" address="ram:10003d50" entry="false"/>
+        <symbol name="VIF1_C2" address="ram:10003d60" entry="false"/>
+        <symbol name="VIF1_C3" address="ram:10003d70" entry="false"/>
+
+
+        <symbol name="VIF0_FIFO(write)" address="ram:10004000" entry="false"/>
+        <symbol name="VIF1_FIFO(read/write)" address="ram:10005000" entry="false"/>
+
+        <symbol name="GIF_FIFO(write)" address="ram:10006000" entry="false"/>
+
+        <symbol name="IPU_out_FIFO(read)" address="ram:10007000" entry="false"/>
+        <symbol name="IPU_in_FIFO(write)" address="ram:10007010" entry="false"/>
+
+        <symbol name="D0_CHCR" address="ram:10008000" entry="false"/>
+        <symbol name="D0_MADR" address="ram:10008010" entry="false"/>
+        <symbol name="D0_QWC" address="ram:10008020" entry="false"/>
+        <symbol name="D0_TADR" address="ram:10008030" entry="false"/>
+        <symbol name="D0_ASR0" address="ram:10008040" entry="false"/>
+        <symbol name="D0_ASR1" address="ram:10008050" entry="false"/>
+
+        <symbol name="D1_CHCR" address="ram:10009000" entry="false"/>
+        <symbol name="D1_MADR" address="ram:10009010" entry="false"/>
+        <symbol name="D1_QWC" address="ram:10009020" entry="false"/>
+        <symbol name="D1_TADR" address="ram:10009030" entry="false"/>
+        <symbol name="D1_ASR0" address="ram:10009040" entry="false"/>
+        <symbol name="D1_ASR1" address="ram:10009050" entry="false"/>
+
+        <symbol name="D2_CHCR" address="ram:1000a000" entry="false"/>
+        <symbol name="D2_MADR" address="ram:1000a010" entry="false"/>
+        <symbol name="D2_QWC" address="ram:1000a020" entry="false"/>
+        <symbol name="D2_TADR" address="ram:1000a030" entry="false"/>
+        <symbol name="D2_ASR0" address="ram:1000a040" entry="false"/>
+        <symbol name="D2_ASR1" address="ram:1000a050" entry="false"/>
+
+        <symbol name="D3_CHCR" address="ram:1000b000" entry="false"/>
+        <symbol name="D3_MADR" address="ram:1000b010" entry="false"/>
+        <symbol name="D3_QWC" address="ram:1000b020" entry="false"/>
+
+        <symbol name="D4_CHCR" address="ram:1000b400" entry="false"/>
+        <symbol name="D4_MADR" address="ram:1000b410" entry="false"/>
+        <symbol name="D4_QWC" address="ram:1000b420" entry="false"/>
+        <symbol name="D4_TADR" address="ram:1000b430" entry="false"/>
+
+        <symbol name="D5_CHCR" address="ram:1000c000" entry="false"/>
+        <symbol name="D5_MADR" address="ram:1000c010" entry="false"/>
+        <symbol name="D5_QWC" address="ram:1000c020" entry="false"/>
+
+        <symbol name="D6_CHCR" address="ram:1000c400" entry="false"/>
+        <symbol name="D6_MADR" address="ram:1000c400" entry="false"/>
+        <symbol name="D6_QWC" address="ram:1000c400" entry="false"/>
+
+        <symbol name="D7_CHCR" address="ram:1000c800" entry="false"/>
+        <symbol name="D7_MADR" address="ram:1000c810" entry="false"/>
+        <symbol name="D7_QWC" address="ram:1000c820" entry="false"/>
+
+        <symbol name="D8_CHCR" address="ram:1000d000" entry="false"/>
+        <symbol name="D8_MADR" address="ram:1000d010" entry="false"/>
+        <symbol name="D8_QWC" address="ram:1000d020" entry="false"/>
+
+        <symbol name="D8_SADR" address="ram:1000d080" entry="false"/>
+
+        <symbol name="D9_CHCR" address="ram:1000d400" entry="false"/>
+        <symbol name="D9_MADR" address="ram:1000d410" entry="false"/>
+        <symbol name="D9_QWC" address="ram:1000d420" entry="false"/>
+        <symbol name="D9_TADR" address="ram:1000d430" entry="false"/>
+
+        <symbol name="D9_SADR" address="ram:1000d480" entry="false"/>
+
+        <symbol name="D_CTRL" address="ram:1000e000" entry="false"/>
+        <symbol name="D_STAT" address="ram:1000e010" entry="false"/>
+        <symbol name="D_PCR" address="ram:1000e020" entry="false"/>
+        <symbol name="D_SQWC" address="ram:1000e030" entry="false"/>
+        <symbol name="D_RBSR" address="ram:1000e040" entry="false"/>
+        <symbol name="D_RBOR" address="ram:1000e050" entry="false"/>
+        <symbol name="D_STADR" address="ram:1000e060" entry="false"/>
+
+        <symbol name="I_STAT" address="ram:1000f000" entry="false"/>
+        <symbol name="I_MASK" address="ram:1000f010" entry="false"/>
+
+        <symbol name="KPUTCHAR" address="ram:1000f180" entry="false"/>
+
+        <symbol name="SB_SMFLG" address="ram:1000f230" entry="false"/>
+
+        <symbol name="D_ENABLER" address="ram:1000f520" entry="false"/>
+        <symbol name="D_ENABLEW" address="ram:1000f590" entry="false"/>
+
+        <symbol name="VU Micro Mem0" address="ram:11000000" entry="false"/>
+        <symbol name="VU Mem0" address="ram:11004000" entry="false"/>
+
+        <symbol name="VU Micro Mem1" address="ram:11008000" entry="false"/>
+        <symbol name="VU Mem1" address="ram:1100C000" entry="false"/>
+
+        <symbol name="GS_PMODE" address="ram:12000000" entry="false"/>
+        <symbol name="GS_SMODE1" address="ram:12000010" entry="false"/>
+        <symbol name="GS_SMODE2" address="ram:12000020" entry="false"/>
+        <symbol name="GS_SRFSH" address="ram:12000030" entry="false"/>
+        <symbol name="GS_SYNCH1" address="ram:12000040" entry="false"/>
+        <symbol name="GS_SYNCH2" address="ram:12000050" entry="false"/>
+        <symbol name="GS_SYNCV" address="ram:12000060" entry="false"/>
+        <symbol name="GS_DISPFB1" address="ram:12000070" entry="false"/>
+        <symbol name="GS_DISPLAY1" address="ram:12000080" entry="false"/>
+        <symbol name="GS_DISPFB2" address="ram:12000090" entry="false"/>
+        <symbol name="GS_DISPLAY2" address="ram:120000A0" entry="false"/>
+        <symbol name="GS_EXTBUF" address="ram:120000B0" entry="false"/>
+        <symbol name="GS_EXTDATA" address="ram:120000C0" entry="false"/>
+        <symbol name="GS_EXTWRITE" address="ram:120000D0" entry="false"/>
+        <symbol name="GS_BGCOLOR" address="ram:120000E0" entry="false"/>
+
+        <symbol name="GS_CSR" address="ram:12001000" entry="false"/>
+        <symbol name="GS_IMR" address="ram:12001000" entry="false"/>
+        <symbol name="GS_BUSDIR" address="ram:12001040" entry="false"/>
+
+        <symbol name="GS_SIGLBLID" address="ram:12001080" entry="false"/>
+
+        <symbol name="SPD_R_INTR_STAT" address="ram:14000028" entry="false"/>
+        <symbol name="SPD_PIO_DIR" address="ram:1400002c" entry="false"/>
+        <symbol name="SPD_PIO_DATA" address="ram:1400002e" entry="false"/>
+
+        <symbol name="SPD_R_XFR_CTRL" address="ram:14000032" entry="false"/>
+
+        <symbol name="PS2HDD_IDE0" address="ram:14000040" entry="false"/>
+
+        <symbol name="PS2HDD_IDE0_PORT" address="ram:1400004e" entry="false"/>
+
+        <symbol name="SPD_R_IF_CTRL" address="ram:14000064" entry="false"/>
+
+        <symbol name="SIF_IRQ?" address="ram:1f801600" entry="false"/>
+
+        <symbol name="CDVDFSV" address="ram:1f402005" entry="false"/>
+        <symbol name="CDVDFSV" address="ram:1f40200a" entry="false"/>
+
+        <symbol name="SPU" address="ram:1f801404" entry="false"/>
+        <symbol name="SPU" address="ram:1f80140c" entry="false"/>
+        <symbol name="SPU" address="ram:1f801414" entry="false"/>
+        <symbol name="SPU" address="ram:1f900800" entry="false"/>
+        <symbol name="SPU" address="ram:1f801570" entry="false"/>
+        <symbol name="SPU" address="ram:1f801014" entry="false"/>
+        <symbol name="SPU" address="ram:1f9007c0" entry="false"/>
+        <symbol name="SPU" address="ram:1f9007c8" entry="false"/>
+
+
+        <symbol name="V_RESET_NMI" address="ram:bfc00000" type="code" entry="false"/>
+        <symbol name="V_COUNTER" address="ram:80000080" type="code" entry="false"/>
+        <symbol name="V_COUNTER" address="ram:bfc00280" type="code" entry="false"/>
+        <symbol name="V_DEBUG" address="ram:80000100" type="code" entry="false"/>
+        <symbol name="V_DEBUG" address="ram:bfc00300" type="code" entry="false"/>
+        <symbol name="V_INTERRUPT" address="ram:80000200" type="code" entry="false"/>
+        <symbol name="V_INTERRUPT" address="ram:bfc00400" type="code" entry="false"/>
+        <symbol name="V_COMMON" address="ram:80000180" type="code" entry="false"/>
+        <symbol name="V_COMMON" address="ram:bfc00380" type="code" entry="false"/>
+        <symbol name="V_TLB_REFILL" address="ram:80000000" type="code" entry="false"/>
+        <symbol name="V_TLB_REFILL" address="ram:bfc00200" type="code" entry="false"/>
+    </default_symbols>
+
 </processor_spec>
