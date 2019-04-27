@@ -270,6 +270,26 @@ with : prime=28 {
         RD = RSsrc;
     }
 
+    # special case of paddb
+    :moveq RD, RSsrc             is RD & RSsrc & rt=0 & mmiop=8 & fct=8 {
+        RD = RSsrc;
+    }
+
+    # special case of paddh
+    :moveq RD, RSsrc      is RD & RSsrc & rt=0 & mmiop=4 & fct=8 {
+        RD = RSsrc;
+    }
+
+    # special case of paddw
+    :moveq RD, RSsrc     is RD & RSsrc & rt=0 & mmiop=0 & fct=0x8 {
+        RD = RSsrc;
+    }
+    
+    # special case of por
+    :moveq RD, RSsrc        is RD & RSsrc & rt=0 & mmiop=0x12 & fct=0x29 {
+        RD = RSsrc;
+    }
+
     # Special Case
     :clear RD     is RD & rt=0 & rs=0 & mmiop=0x10 & fct=0x28 {
         RD = 0;
