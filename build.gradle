@@ -48,4 +48,5 @@ task runSleigh(type:Exec) {
 runSleigh.inputs.file('data/languages/r5900.slaspec')
 runSleigh.outputs.file('data/languages/r5900.sla')
 buildExtension.exclude '/.vscode'
+buildExtension.exclude 'main.workflow'
 buildExtension.dependsOn runSleigh

@@ -3,6 +3,7 @@
 <processor_spec>
     <properties>
         <property key="addressesDoNotAppearDirectlyInCode" value="true"/>
+        <property key="emulateInstructionStateModifierClass" value="ghidra.program.emulation.MIPSR5900EmulateInstructionStateModifier"/>
     </properties>
     <programcounter register="pc"/>
 
