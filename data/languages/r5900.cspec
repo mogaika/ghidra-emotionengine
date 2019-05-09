@@ -18,12 +18,12 @@
           <entry size="1" alignment="1" />
           <entry size="2" alignment="2" />
           <entry size="4" alignment="4" />
-          <entry size="8" alignment="4" />
+          <entry size="8" alignment="8" />
      </size_alignment_map>
   </data_organization>
-  <stackpointer register="sp_lo" space="ram"/>
+  <stackpointer register="sp" space="ram" growth="negative"/>
   <funcptr align="2"/>
-  <spacebase name="gp" register="gp_lo" space="ram"/>
+  <spacebase name="gp" register="gp" space="ram"/> <!-- Must be 0x10 aligned -->
   <spacebase name="frame" register="fp" space="stack"/>
   <global>
     <range space="gp"/>
@@ -32,10 +32,10 @@
   </global>
   <aggressivetrim signext="true"/>  <!-- Aggressively try to eliminate sign extensions -->
   <returnaddress>
-    <register name="ra_lo"/>
+    <register name="ra"/>
   </returnaddress>
   <default_proto>
-    <prototype name="__stdcall" extrapop="unknown" stackshift="0x10">
+    <prototype name="__stdcall" extrapop="0" stackshift="0" strategy="register">
       <input killedbycall="true">  <!-- assume parameter passing register locations are killedbycall -->
         <pentry minsize="1" maxsize="4" metatype="float" extension="float">
           <register name="f12"/>
@@ -49,28 +49,28 @@
         <pentry minsize="1" maxsize="4" metatype="float" extension="float">
           <register name="f18"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="a0"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="a1"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="a2"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="a3"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="t0"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="t1"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="t2"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="t3"/>
         </pentry>
         <pentry minsize="1" maxsize="500" align="0x10">
@@ -84,16 +84,17 @@
         <pentry minsize="4" maxsize="4" metatype="float">
           <register name="f2"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="v0"/>
         </pentry>
-        <pentry minsize="1" maxsize="8" extension="inttype">
+        <pentry minsize="1" maxsize="8" extension="sign">
           <register name="v1"/>
         </pentry>
       </output>
       <unaffected>
         <register name="ra"/>
         <register name="fp"/>
+        <register name="sp"/>
         <register name="s0"/>
         <register name="s1"/>
         <register name="s2"/>
@@ -121,13 +122,11 @@
         <register name="f12"/>
       </killedbycall>
       <likelytrash>
-        <register name="t8"/>
-        <register name="t9"/>
         <register name="k0"/>
         <register name="k1"/>
       </likelytrash>
       <localrange>
-        <range space="frame"/>
+        <range space="frame"/> <!-- prevents the creation of non-existant local variables when fp is used -->
       </localrange>
     </prototype>
   </default_proto>
