@@ -26,6 +26,7 @@
   <spacebase name="gp" register="gp" space="ram"/> <!-- Must be 0x10 aligned -->
   <spacebase name="frame" register="fp" space="stack"/>
   <global>
+    <!-- Unsure if the fp needs to be here or not -->
     <range space="gp"/>
     <range space="ram"/>
     <range space="register" first="0x2000" last="0x2fff"/>
@@ -115,6 +116,7 @@
         </pentry>
         <pentry minsize="4" maxsize="4" metatype="float">
           <register name="f2"/>
+        </pentry>
         <pentry minsize="9" maxsize="16" extension="float">
           <register name="v0_qw"/>
         </pentry>
@@ -126,9 +128,6 @@
         </pentry>
       </output>
       <unaffected>
-        <register name="ra"/>
-        <register name="fp"/>
-        <register name="sp"/>
         <register name="s0"/>
         <register name="s1"/>
         <register name="s2"/>
@@ -137,7 +136,10 @@
         <register name="s5"/>
         <register name="s6"/>
         <register name="s7"/>
-        <register name="f20"/>
+        <register name="fp"/>
+        <register name="sp"/>
+        <register name="gp"/>
+        <register name="f20"/>   <!-- Only 6 "even" floating pointer registers are saved by callee -->
         <register name="f22"/>
         <register name="f24"/>
         <register name="f26"/>
