@@ -13,7 +13,7 @@
 		<register_mapping dwarf="27" ghidra="k1"/>
 		<register_mapping dwarf="28" ghidra="gp"/>
 		<register_mapping dwarf="29" ghidra="sp" stackpointer="true"/>
-		<register_mapping dwarf="30" ghidra="s8"/>
+		<register_mapping dwarf="30" ghidra="fp"/>
 		<register_mapping dwarf="31" ghidra="ra"/>
 		<register_mapping dwarf="32" ghidra="f0" auto_count="32"/> <!-- f0..f31 -->
 	</register_mappings>

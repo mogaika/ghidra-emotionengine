@@ -106,7 +106,7 @@
         <register name="s5"/>
         <register name="s6"/>
         <register name="s7"/>
-        <register name="s8"/>
+        <register name="fp"/>
         <register name="sp"/>
         <register name="gp"/>
         <register name="f20"/>   <!-- Only 6 "even" floating pointer registers are saved by callee -->
