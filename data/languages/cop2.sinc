@@ -1,5 +1,91 @@
 # COP2 (VU) macro instruction set
 
+define pcodeop VABS;
+define pcodeop VADD;
+define pcodeop VADDQ;
+define pcodeop VADDBC;
+define pcodeop VADDA;
+define pcodeop VADDAI;
+define pcodeop VADDAQ;
+define pcodeop VADDABC;
+define pcodeop VCALLMS;
+define pcodeop VCALLMSR;
+define pcodeop VCLIP;
+define pcodeop VDIV;
+define pcodeop VFTOI0;
+define pcodeop VFTOI4;
+define pcodeop VFTOI12;
+define pcodeop VFTOI15;
+define pcodeop VIADD;
+define pcodeop VIADDI;
+define pcodeop VIAND;
+define pcodeop VILWR;
+define pcodeop VIOR;
+define pcodeop VISUB;
+define pcodeop VISWR;
+define pcodeop VITOF0;
+define pcodeop VITOF4;
+define pcodeop VITOF12;
+define pcodeop VITOF15;
+define pcodeop VLQD;
+define pcodeop VLQI;
+define pcodeop VMADD;
+define pcodeop VMADDI;
+define pcodeop VMADDQ;
+define pcodeop VMADDBC;
+define pcodeop VMADDA;
+define pcodeop VMADDAI;
+define pcodeop VMADDAQ;
+define pcodeop VMADDABC;
+define pcodeop VMAX;
+define pcodeop VMAXI;
+define pcodeop VMAXBC;
+define pcodeop VMFIR;
+define pcodeop VMINI;
+define pcodeop VMINII;
+define pcodeop VMINIBC;
+define pcodeop VMOVE;
+define pcodeop VMR32;
+define pcodeop VMSUB;
+define pcodeop VMSUBI;
+define pcodeop VMSUBQ;
+define pcodeop VMSUBBC;
+define pcodeop VMSUBA;
+define pcodeop VMSUBAI;
+define pcodeop VMSUBAQ;
+define pcodeop VMSUBABC;
+define pcodeop VMTIR;
+define pcodeop VMUL;
+define pcodeop VMULI;
+define pcodeop VMULQ;
+define pcodeop VMULBC;
+define pcodeop VMULA;
+define pcodeop VMULAI;
+define pcodeop VMULAQ;
+define pcodeop VMULABC;
+define pcodeop VNOP;
+define pcodeop VOPMULA;
+define pcodeop VOPMSUB;
+define pcodeop VRGET;
+define pcodeop VRINIT;
+define pcodeop VRNEXT;
+define pcodeop VRSQRT;
+define pcodeop VRXOR;
+define pcodeop VSQD;
+define pcodeop VSQI;
+define pcodeop VSQRT;
+define pcodeop VSUB;
+define pcodeop VSUBI;
+define pcodeop VSUBQ;
+define pcodeop VSUBBC;
+define pcodeop VSUBA;
+define pcodeop VSUBAI;
+define pcodeop VSUBAQ;
+define pcodeop VSUBABC;
+define pcodeop VWAITQ;
+
+
+
 # COP2 integer/control registers
 define register offset=0x4000 size=4 [
      vi0     vi1     vi2     vi3
@@ -59,6 +145,12 @@ define register offset=0x4100 size=4 [
     vf31w       vf31y       vf31z       vf31x
 ];
 
+define register offset=0x4300 size=4 [
+    R           I           Q
+    TPC         CMSAR0      FBRST
+    VPUStat     CMSAR1      ACC2
+];
+
 attach variables [ ft128 fd128 fs128 ] [
     vf0     vf1     vf2     vf3
     vf4     vf5     vf6     vf7
@@ -81,85 +173,235 @@ attach variables [ id ] [
     vc12    vc13    vc14    vc15
 ];
 
+attach variables [ ftw128 fdw128 fsw128 ] [
+    vf0w        vf1w        vf2w        vf3w
+    vf4w        vf5w        vf6w        vf7w
+    vf8w        vf9w        vf10w       vf11w
+    vf12w       vf13w       vf14w       vf15w
+    vf16w       vf17w       vf18w       vf19w
+    vf20w       vf21w       vf22w       vf23w
+    vf24w       vf25w       vf26w       vf27w
+    vf28w       vf29w       vf30w       vf31w
+];
+
+attach variables [ fty128 fdy128 fsy128 ] [
+    vf0y        vf1y        vf2y        vf3y
+    vf4y        vf5y        vf6y        vf7y
+    vf8y        vf9y        vf10y       vf11y
+    vf12y       vf13y       vf14y       vf15y
+    vf16y       vf17y       vf18y       vf19y
+    vf20y       vf21y       vf22y       vf23y
+    vf24y       vf25y       vf26y       vf27y
+    vf28y       vf29y       vf30y       vf31y
+];
+
+attach variables [ ftz128 fdz128 fsz128 ] [
+    vf0z        vf1z        vf2z        vf3z
+    vf4z        vf5z        vf6z        vf7z
+    vf8z        vf9z        vf10z       vf11z
+    vf12z       vf13z       vf14z       vf15z
+    vf16z       vf17z       vf18z       vf19z
+    vf20z       vf21z       vf22z       vf23z
+    vf24z       vf25z       vf26z       vf27z
+    vf28z       vf29z       vf30z       vf31z
+];
+
+attach variables [ ftx128 fdx128 fsx128 ] [
+    vf0x        vf1x        vf2x        vf3x
+    vf4x        vf5x        vf6x        vf7x
+    vf8x        vf9x        vf10x       vf11x
+    vf12x       vf13x       vf14x       vf15x
+    vf16x       vf17x       vf18x       vf19x
+    vf20x       vf21x       vf22x       vf23x
+    vf24x       vf25x       vf26x       vf27x
+    vf28x       vf29x       vf30x       vf31x
+];
+
 FT128: ft128      is ft128 { export ft128; }
 FD128: fd128      is fd128 { export fd128; }
 FS128: fs128      is fs128 { export fs128; }
+ACC128: ACC2      is ACC2  { export ACC2; }
 
 bc: ".I"    is bit0=0 {  }
 bc: ".NI"   is bit0=1 {  }
 
-wyzx: ""        is dest=0 {}
-wyzx: ".x"      is dest=1 {}
-wyzx: ".z"      is dest=2 {}
-wyzx: ".zx"     is dest=3 {}
-wyzx: ".y"      is dest=4 {}
-wyzx: ".yx"     is dest=5 {}
-wyzx: ".yz"     is dest=6 {}
-wyzx: ".yzx"    is dest=7 {}
-wyzx: ".w"      is dest=8 {}
-wyzx: ".wx"     is dest=9 {}
-wyzx: ".wz"     is dest=10 {}
-wyzx: ".wzx"    is dest=11 {}
-wyzx: ".wy"     is dest=12 {}
-wyzx: ".wyx"    is dest=13 {}
-wyzx: ".wyz"    is dest=14 {}
-wyzx: ".wyzx"   is dest=15 {}
+fdest: ""        is dest=00 { export 0:1; }
+fdest: ".x"      is dest=01 { export 1:1; }
+fdest: ".z"      is dest=02 { export 2:1; }
+fdest: ".zx"     is dest=03 { export 3:1; }
+fdest: ".y"      is dest=04 { export 4:1; }
+fdest: ".yx"     is dest=05 { export 5:1; }
+fdest: ".yz"     is dest=06 { export 6:1; }
+fdest: ".yzx"    is dest=07 { export 7:1; }
+fdest: ".w"      is dest=08 { export 8:1; }
+fdest: ".wx"     is dest=09 { export 9:1; }
+fdest: ".wz"     is dest=10 { export 10:1; }
+fdest: ".wzx"    is dest=11 { export 11:1; }
+fdest: ".wy"     is dest=12 { export 12:1; }
+fdest: ".wyx"    is dest=13 { export 13:1; }
+fdest: ".wyz"    is dest=14 { export 14:1; }
+fdest: ".wyzx"   is dest=15 { export 15:1; }
 
-:lqc2 FT128, OFF_BASE                  is prime=54 & OFF_BASE & FT128 {
+:lqc2 FT128, OFF_BASE                    is prime=54 & OFF_BASE & FT128 {
     FT128 = *:16 OFF_BASE;
 }
 
-:sqc2 FT128, OFF_BASE                  is prime=62 & OFF_BASE & FT128 {
+:sqc2 FT128, OFF_BASE                    is prime=62 & OFF_BASE & FT128 {
     *:16 OFF_BASE = FT128;
 }
 
 with : prime=18 {  # COP2
 
-    :bc2f Rel16                         is copop=8 & copfct=0 & Rel16 {
+    :bc2f Rel16                           is copop=8 & copfct=0 & Rel16 {
         tmp:1 = getCopCondition(2:1, 0:1);
         delayslot(1);
         if (tmp != 0) goto inst_next;
         goto Rel16;
     }
 
-    :bc2fl Rel16                        is copop=8 & copfct=2 & Rel16 {
+    :bc2fl Rel16                          is copop=8 & copfct=2 & Rel16 {
         tmp:1 = getCopCondition(2:1, 0:1);
         if (tmp != 0) goto inst_next;
         delayslot(1);
         goto Rel16;
     }
 
-    :bc2t Rel16                         is copop=8 & copfct=1 & Rel16 {
+    :bc2t Rel16                           is copop=8 & copfct=1 & Rel16 {
         tmp:1 = getCopCondition(2:1, 0:1);
         if (tmp == 0) goto inst_next;
         delayslot(1);
         goto Rel16;
     }
 
-    :bc2tl Rel16                        is copop=8 & copfct=3 & Rel16 {
+    :bc2tl Rel16                          is copop=8 & copfct=3 & Rel16 {
         tmp:1 = getCopCondition(2:1, 0:1);
         if (tmp == 0) goto inst_next;
         delayslot(1);
         goto Rel16;
     }
 
-    :cfc2^bc RT, id                     is copop=2 & RT & id & cop2zero10=0 & bc {
+    :cfc2^bc RT, id                       is copop=2 & RT & id & cop2zero10=0 & bc {
         build bc;
         RT = zext(id);
     }
 
-    :ctc2^bc RTsrc, id                  is copop=6 & RTsrc & id & cop2zero10=0 & bc {
+    :ctc2^bc RTsrc, id                    is copop=6 & RTsrc & id & cop2zero10=0 & bc {
         build bc;
         id = RTsrc:4;
     }
 
-    :qmfc2^bc RT128, FD128              is copop=1 & RT128 & FD128 & cop2zero10=0 & bc {
+    :qmfc2^bc RT128, FD128                is copop=1 & RT128 & FD128 & cop2zero10=0 & bc {
         build bc;
         RT128 = FD128;
     }
 
-    :qmtc2^bc FD128, RT128              is copop=5 & RT128 & FD128 & cop2zero10=0 & bc {
+    :qmtc2^bc FD128, RT128                is copop=5 & RT128 & FD128 & cop2zero10=0 & bc {
         FD128 = RT128;
+    }
+
+    :vabs^fdest FT128, FS128              is co=1 & fdest & FT128 & FS128 & cop2op3=0x1fd {
+        build fdest;
+        tdest:1 = fdest:1;
+        FT128 = VABS(FS128, fdest);
+    }
+
+    :vadd^fdest FD128, FT128, FS128       is co=1 & fdest & FD128 & FT128 & FS128 & cop2op1=40 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FT128, FS128, fdest);
+    }
+
+    :vaddi^fdest FD128, FS128, I          is co=1 & fdest & FD128 & ft=0 & FS128 & I & cop2op1=34 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FS128, I, fdest);
+    }
+
+    :vaddq^fdest FD128, FS128, Q          is co=1 & fdest & FD128 & ft=0 & FS128 & Q & cop2op1=32 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FS128, Q, fdest);
+    }
+
+    :vaddx^fdest FD128, FS128, ftx128     is co=1 & fdest & FD128 & ftx128 & FS128 & cop2op1=0 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FS128, ftx128, fdest);
+    }
+
+    :vaddy^fdest FD128, FS128, fty128     is co=1 & fdest & FD128 & fty128 & FS128 & cop2op1=1 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FS128, fty128, fdest);
+    }
+
+    :vaddz^fdest FD128, FS128, ftz128     is co=1 & fdest & FD128 & ftz128 & FS128 & cop2op1=2 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FS128, ftz128, fdest);
+    }
+
+    :vaddw^fdest FD128, FS128, ftw128     is co=1 & fdest & FD128 & ftw128 & FS128 & cop2op1=3 {
+        build fdest;
+        tdest:1 = fdest:1;
+        FD128 = VADD(FS128, ftw128, fdest);
+    }
+
+    :vadda^fdest ACC128, FS128, FT128     is co=1 & ACC128 & fdest & FT128 & FS128 & cop2op3=0x2bc {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, FT128, tdest);
+    }
+
+    :vaddai^fdest ACC128, FS128, I        is co=1 & ACC128 & fdest & ft=0 & FS128 & I & cop2op3=0x23e {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, I, tdest);
+    }
+
+    :vaddaq^fdest ACC128, FS128, Q        is co=1 & ACC128 & fdest & ft=0 & FS128 & Q & cop2op3=0x23c {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, Q, tdest);
+    }
+
+    #Broadcast Add to Accumulator
+    :vaddx^fdest ACC128, FS128, ftx128     is co=1 & fdest & ACC128 & ftx128 & FS128 & cop2op1=60 {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, ftx128, fdest);
+    }
+
+    :vaddy^fdest ACC128, FS128, fty128     is co=1 & fdest & ACC128 & fty128 & FS128 & cop2op1=61 {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, fty128, fdest);
+    }
+
+    :vaddz^fdest ACC128, FS128, ftz128     is co=1 & fdest & ACC128 & ftz128 & FS128 & cop2op1=62 {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, ftz128, fdest);
+    }
+
+    :vaddw^fdest ACC128, FS128, ftw128     is co=1 & fdest & ACC128 & ftw128 & FS128 & cop2op1=63 {
+        build fdest;
+        tdest:1 = fdest:1;
+        ACC128 = VADD(FS128, ftw128, fdest);
+    }
+
+    :vcallms mmimmed                       is co=1 & dest=0 & mmimmed & cop2op6=56 {
+        VCALLMS(mmimmed:2);
+    }
+
+    :vcallmsr "CMSAR0"                     is co=1 & dest=0 & ft=0 & fd=0 & fs=27 & cop2op1=57 {
+        VCALLMS(CMSAR0:2);
+    }
+
+    :vftoi4^fdest FT128, FS128             is co=1 & fdest & FT128 & FS128 & cop2op3=0x17d {
+        build fdest;
+        tdest:1 = fdest:1;
+        FT128 = VFTOI4(FS128, tdest);
     }
 
     :cop2 immed26                       is immed26 { }
