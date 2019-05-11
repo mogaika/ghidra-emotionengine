@@ -21,10 +21,10 @@
           <entry size="8" alignment="8" />
      </size_alignment_map>
   </data_organization>
-  <stackpointer register="sp" space="ram" growth="negative"/>
+  <stackpointer register="sp_lo" space="ram" growth="negative"/>
   <funcptr align="2"/>
-  <spacebase name="gp" register="gp" space="ram"/> <!-- Must be 0x10 aligned -->
-  <spacebase name="frame" register="fp" space="stack"/>
+  <spacebase name="gp" register="gp_lo" space="ram"/> <!-- Must be 0x10 aligned -->
+  <spacebase name="frame" register="fp_lo" space="stack"/>
   <global>
     <!-- Unsure if the fp needs to be here or not -->
     <range space="gp"/>

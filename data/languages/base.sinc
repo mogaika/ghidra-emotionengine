@@ -27,7 +27,7 @@ define register offset=0 size=8 [
     s4 s4_udw s5 s5_udw s6 s6_udw s7 s7_udw
     t8 t8_udw t9 t9_udw k0 k0_udw k1 k1_udw
     gp gp_udw sp sp_udw fp fp_udw ra ra_udw
-    pc_udw pc
+    pc pc_udw
 ];
 
 # 32 bit representation of the 128 bit registers
