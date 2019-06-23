@@ -43,6 +43,33 @@
       <funcstart validcode="function" thunk="true"/>
   </pattern>
 
+  <pattern> <!-- EE Non-Virtual Thunk -->
+      <data> 0xf0ffbd27 0x....8424 0x0000bfff 0x0000bfdf 0x......08 0x1000bd27 </data>
+      <!-- addiu      sp,sp,-0x10
+           addiu      a0,a0,xxxx
+           sd         ra,(sp)
+           ld         ra,(sp)
+           j          thunked_function
+           _addiu     sp,sp,0x10
+       -->
+      <funcstart validcode="function" thunk="true"/>
+   </pattern>
+
+  <pattern> <!-- EE Virtual Thunk -->
+      <data> 0xf0ffbd27 0x0000bfff 0x00008f8c 0x0000bfdf 0x....ee8d 0x......08 0x1000bd27 </data>
+      <!-- addiu      sp,sp,-0x10
+           sd         ra,(sp)
+           lw         t7,(a0) # load vtable address from this
+           ld         ra,(sp)
+           lw         t6,offset(t7) # load ptrdiff_t (offset to virtual base) into t6
+           addu       a0,a0,t6 # shift this to it's virtual base
+           j          thunked_function
+           _addiu     sp,sp,0x10
+       -->
+      <funcstart validcode="function" thunk="true"/>
+   </pattern>
+
+
 
   <pattern>
      <data>0x01 0xff 0x03 0x24 0x0c 0x00 0x00 0x00 0x08 0x00 0xe0 0x03</data>
