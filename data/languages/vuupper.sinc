@@ -62,7 +62,6 @@ define pcodeop VMULA;
 define pcodeop VMULAI;
 define pcodeop VMULAQ;
 define pcodeop VMULABC;
-define pcodeop VNOP;
 define pcodeop VOPMULA;
 define pcodeop VOPMSUB;
 define pcodeop VRGET;
@@ -294,7 +293,7 @@ with : prime=18 {
 :vmula^bc^dest "ACC", vufs, vuft                  is vuinst & dest & vuft          & vufs          & vuop_2_10=0b001101111 & bc
     { vuACC = VMULABC(vufs, vuft); }
 :vnop                                             is vuinst & vudest=0b0000 & vuft=0b00000 & vufs=0b00000 & vuop_0_10=0b01011111111
-    { VNOP(); }
+    {}
 :vopmula."xyz" "ACC", vufs, vuft                  is vuinst & vudest=0b1110 & vuft & vufs          & vuop_0_10=0b01011111110
     { vuACC = VOPMULA(vufs, vuft); }
 :vopmsub."xyz" vufd, vufs, vuft                   is vuinst & vudest=0b1110 & vuft & vufs & vufd   & vuop_0_5=0b101110
@@ -459,7 +458,7 @@ with : prime=18 {
 :mula^bc^dest "ACC", vufs, vuft                  is vu1inst & dest & vuft          & vufs          & vuop_2_10=0b001101111 & bc
     { vuACC = VMULABC(vufs, vuft); }
 :nop                                             is vu1inst & vudest=0b0000 & vuft=0b00000 & vufs=0b00000 & vuop_0_10=0b01011111111
-    { VNOP(); }
+    {}
 :opmula."xyz" "ACC", vufs, vuft                  is vu1inst & vudest=0b1110 & vuft & vufs          & vuop_0_10=0b01011111110
     { vuACC = VOPMULA(vufs, vuft); }
 :opmsub."xyz" vufd, vufs, vuft                   is vu1inst & vudest=0b1110 & vuft & vufs & vufd   & vuop_0_5=0b101110
