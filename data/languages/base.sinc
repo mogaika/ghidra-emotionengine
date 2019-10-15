@@ -113,6 +113,12 @@ define token instr(32)
     bigfunct	= (0,10)
 
 # cop2 stuff
+    full=(0,31)
+    vucI=(31,31) # 1 when next instruction is loi
+    vucE=(30,30) # return to micro mode after this instruction
+    vucM=(29,29) # 1 to disable QMTC2/CTC2 interlock
+    vucD=(28,28) # 1 for debug break
+    vucT=(27,27) # 1 for debug halt
     vuoffset    = (0,15)
     vuop_0_5    = (0,5)
     vuop_0_10   = (0,10)
@@ -135,7 +141,26 @@ define token instr(32)
     vuit        = (16,20)
     vuis        = (11,15)
     vuid        = (6,10)
-    vuimm5      = (6,10)
+    vuimm5       = (6,10) signed
+    vusimm11     = (0,10) signed
+    vuimm24      = (0,23)
+    vuimm12      = (0,10)
+    vulop7       = (25,31)
+    vulop11      = (0,10)
+    vulop6       = (0,5)
+    vul24        = (24,24)
+    vul22_24     = (22,24)
+;
+
+define register offset=0x350 size=8 contextreg;
+define context contextreg
+    v1context=(0,31)
+    cI=(32,32) noflow
+    cE=(33,33)
+    cM=(34,34)
+    cD=(35,35)
+    cT=(36,36)
+    cUpper=(37,37) noflow
 ;
 
 # 64 bit
@@ -185,5 +210,9 @@ RT32src: rt   	is rt & rt32=0      { export 0:4; }
 # relative offsets
 Rel16: reloc		is off16	[ reloc=inst_start+4+4*off16; ]					{ export *:4 reloc; }
 Abs26: reloc		is ind26	[ reloc=((inst_start+4) $and 0xfffffffff0000000) | 4*ind26; ]	{ export *:4 reloc; }
+Rel11: reloc		is vusimm11	[ reloc=inst_start+8+8*vusimm11; ]					{ export *:4 reloc; }
 
 OFF_BASE: simmed(base)  	is simmed & base    { tmp:4 = base:4 + simmed; export tmp; }
+
+VU_IMM15: result is vuop_0_10 & vuop_21_24 [ result = (vuop_21_24 << 11) $or vuop_0_10; ] { tmp:2 = result; export tmp; }
+VU_IMM12_UP6: u6 is vuop_0_10 & vuop_21_24 [ u6=(((vuop_21_24 $and 0x1) << 6) | (vuop_0_10 >> 6)); ]{ tmp:1 = u6; export tmp; }
