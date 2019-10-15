@@ -11,18 +11,6 @@ define pcodeop QMTC2;
 define pcodeop VCALLMS;
 define pcodeop VCALLMSR;
 
-# COP2 integer/control registers
-define register offset=0x4000 size=4 [
-     vi0     vi1     vi2     vi3
-     vi4     vi5     vi6     vi7
-     vi8     vi9    vi10    vi11
-    vi12    vi13    vi14    vi15
-     vc0     vc1     vc2     vc3
-     vc4     vc5     vc6     vc7
-     vc8     vc9    vc10    vc11
-    vc12    vc13    vc14    vc15
-];
-
 # COP2 floating point registers
 define register offset=0x4100 size=16 [
     vf0     vf1     vf2     vf3
@@ -70,10 +58,108 @@ define register offset=0x4100 size=4 [
     vf31w       vf31y       vf31z       vf31x
 ];
 
-define register offset=0x4300 size=4 [
-    vuACC       vuI         vuQ         vuCF
-    vuR
+define register offset=0x4200 size=2 [
+     vi0  _ _ _  _ _ _ _
+     vi1  _ _ _  _ _ _ _
+     vi2  _ _ _  _ _ _ _
+     vi3  _ _ _  _ _ _ _
+     vi4  _ _ _  _ _ _ _
+     vi5  _ _ _  _ _ _ _
+     vi6  _ _ _  _ _ _ _
+     vi7  _ _ _  _ _ _ _
+     vi8  _ _ _  _ _ _ _
+     vi9  _ _ _  _ _ _ _
+     vi10 _ _ _  _ _ _ _
+     vi11 _ _ _  _ _ _ _
+     vi12 _ _ _  _ _ _ _
+     vi13 _ _ _  _ _ _ _
+     vi14 _ _ _  _ _ _ _
+     vi15 _ _ _  _ _ _ _
 ];
+
+#obtained from pcsx2 VU.h
+define register offset=0x4300 size=4 [
+    vuStatus_32 _ _ _
+    vuMAC_32 _ _ _
+    vuCF_32 _ _ _
+    vuACCw vuACCz vuACCy vuACCx
+    vuR_32 _ _ _
+    vuI _ _ _
+    vuQ _ _ _
+    vuP _ _ _
+    vf0_flag _ _ _
+    _ _ _ _
+    vuTCP_32 _ _ _
+    vuCMSAR0_32 _ _ _
+    vuFBRST _ _ _
+    vpu_STAT _ _ _
+    _ _ _ _
+    vuCMSAR1_32 _ _ _
+];
+
+#define bitrange vuVBS0=vpu_STAT[0,1]
+#                vuVDS0=vpu_STAT[1,1]
+#                vuVTS0=vpu_STAT[2,1]
+#                vuVFS0=vpu_STAT[3,1]
+#                vuDIV0=vpu_STAT[5,1]
+#                vuIBS0=vpu_STAT[7,1]
+#                vuVBS1=vpu_STAT[8,1]
+#                vuVDS1=vpu_STAT[9,1]
+#                vuVTS1=vpu_STAT[10,1]
+#                vuVFS1=vpu_STAT[11,1]
+#                vuVGW1=vpu_STAT[12,1]
+#                vuDIV1=vpu_STAT[13,1]
+#                vuEFU1=vpu_STAT[14,1];
+
+#define bitrange vuFB0=vuFBRST[0,1]
+#                vuRS0=vuFBRST[1,1]
+#                vuDE0=vuFBRST[2,1]
+#                vuTE0=vuFBRST[3,1]
+#                vuFB1=vuFBRST[8,1]
+#                vuRS1=vuFBRST[9,1]
+#                vuDE1=vuFBRST[10,1]
+#                vuTE1=vuFBRST[11,1];
+
+#define bitrange vuCMSAR0=vuCMSAR0_32[0,15];
+#define bitrange vuCMSAR1=vuCMSAR1_32[0,15];
+
+#define bitrange vuTCP=vuTCP_32[0,15];
+
+#define bitrange vuCF=vuCF_32[0,23];
+
+#define bitrange vuMAC=vuMAC_32[0,15]
+#                vuZw=vuMAC_32[0,1]
+#                vuZz=vuMAC_32[1,1]
+#                vuZy=vuMAC_32[2,1]
+#                vuZx=vuMAC_32[3,1]
+#                vuSw=vuMAC_32[4,1]
+#                vuSz=vuMAC_32[5,1]
+#                vuSy=vuMAC_32[6,1]
+#                vuSx=vuMAC_32[7,1]
+#                vuUw=vuMAC_32[8,1]
+#                vuUz=vuMAC_32[9,1]
+#                vuUy=vuMAC_32[10,1]
+#                vuUx=vuMAC_32[11,1]
+#                vuOw=vuMAC_32[12,1]
+#                vuOz=vuMAC_32[13,1]
+#                vuOy=vuMAC_32[14,1]
+#                vuOx=vuMAC_32[15,1];
+
+#define bitrange vuStatus=vuStatus_32[0,11]
+#                vuStatusZ=vuStatus_32[0,1]
+#                vuStatusS=vuStatus_32[1,1]
+#                vuStatusU=vuStatus_32[2,1]
+#                vuStatusO=vuStatus_32[3,1]
+#                vuStatusI=vuStatus_32[4,1]
+#                vuStatusD=vuStatus_32[5,1]
+#                vuStatusZS=vuStatus_32[6,1]
+#                vuStatusSS=vuStatus_32[7,1]
+#                vuStatusUS=vuStatus_32[8,1]
+#                vuStatusOS=vuStatus_32[9,1]
+#                vuStatusIS=vuStatus_32[10,1]
+#                vuStatusDS=vuStatus_32[11,1];
+
+#define bitrange vuR=vuR_32[0,23];
 
 attach variables [ vuft vufd vufs ] [
     vf0     vf1     vf2     vf3
@@ -91,63 +177,19 @@ attach variables [ vuit vuis vuid ] [
      vi4     vi5     vi6     vi7
      vi8     vi9    vi10    vi11
     vi12    vi13    vi14    vi15
-     vc0     vc1     vc2     vc3
-     vc4     vc5     vc6     vc7
-     vc8     vc9    vc10    vc11
-    vc12    vc13    vc14    vc15
+    _ _ _ _
+    _ _ _ _
+    _ _ _ _
+    _ _ _ _
 ];
 
+macro ssum(src, dest) {
+    dest = (src[32,32] f* src[32,32]) f+ (src[64,32] f* src[64,32]) f+ (src[96,32] f* src[96,32]);
+}
+
 vuinst: is prime=18 & vuco=1 { export 0:1; }
+vu1inst: is vuco=0 & cUpper=1 { export 0:1; }
 
-@include "vuupper.sinc"
+VUIT:vuit is vuit { export vuit; }
 
-:lqc2 vuft, OFF_BASE                              is prime=54 & OFF_BASE & vuft {
-    vuft = *:16 OFF_BASE;
-}
-
-:sqc2 vuft, OFF_BASE                              is prime=62 & OFF_BASE & vuft {
-    *:16 OFF_BASE = vuft;
-}
-
-with : prime=18 {
-    :bc2f Rel16                                   is vuop_21_25=0b01000 & vuop_16_20=0b00000 & Rel16 {
-        tmp:1 = getCopCondition(2:1, 0:1);
-        delayslot(1);
-        if (tmp != 0) goto inst_next;
-        goto Rel16;
-    }
-
-    :bc2fl Rel16                                  is vuop_21_25=0b01000 & vuop_16_20=0b00010 & Rel16 {
-        tmp:1 = getCopCondition(2:1, 0:1);
-        if (tmp != 0) goto inst_next;
-        delayslot(1);
-        goto Rel16;
-    }
-
-    :bc2t Rel16                                   is vuop_21_25=0b01000 & vuop_16_20=0b00001 & Rel16 {
-        tmp:1 = getCopCondition(2:1, 0:1);
-        if (tmp == 0) goto inst_next;
-        delayslot(1);
-        goto Rel16;
-    }
-
-    :bc2tl Rel16                                  is vuop_21_25=0b01000 & vuop_16_20=0b00011 & Rel16 {
-        tmp:1 = getCopCondition(2:1, 0:1);
-        if (tmp == 0) goto inst_next;
-        delayslot(1);
-        goto Rel16;
-    }
-    
-    :cfc2.I RT, vuccid                            is vuop_21_25=0b00010 & RT & vuccid & vuop_1_10=0b0000000000 & I
-        { RT = zext(vuccid:4); }
-    :ctc2.I RTsrc, vuccid                         is vuop_21_25=0b00110 & RTsrc & vuccid & vuop_1_10=0b0000000000 & I
-        { vuccid = RTsrc:4; }
-    :qmfc2.I RT128, vufd                          is vuop_21_25=0b00001 & RT128 & vufd                            & I
-        { RT128 = vufd; }
-    :qmtc2.I RT128, vufd                          is vuop_21_25=0b00101 & RT128 & vufd   & vuop_1_10=0b0000000000 & I
-        { vufd = RT128; }
-    :vcallms imm15 "; address =" address          is vuco=1 & vudest=0b0000 & imm15 & vuop_0_5=0b111000 [ address = imm15 * 8; ]
-        { VCALLMS(imm15:4); }
-    :vcallmsr "vi27"                              is vuco=1 & vudest=0b0000 & vuft=0b00000 & vufs=0b11011 & fd=0b00000 & vuop_0_5=0b111001
-        { VCALLMSR(); }
-}
+VU_OFF_BASE: vusimm11(VUIT) is vusimm11 & VUIT { tmp = (VUIT + vusimm11)*16; export tmp; }
