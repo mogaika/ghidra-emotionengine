@@ -97,6 +97,8 @@ define register offset=0x4300 size=4 [
     vuCMSAR1_32 _ _ _
 ];
 
+define register offset=0x4330 size=16 vuACC;
+
 #define bitrange vuVBS0=vpu_STAT[0,1]
 #                vuVDS0=vpu_STAT[1,1]
 #                vuVTS0=vpu_STAT[2,1]

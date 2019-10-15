@@ -108,15 +108,15 @@ bc: "y"      is vubc=1 { export 0:1; }
 bc: "z"      is vubc=2 { export 0:1; }
 bc: "w"      is vubc=3 { export 0:1; }
 
-fsf: "x"     is vufsf=0 { export 0:1; }
-fsf: "y"     is vufsf=1 { export 0:1; }
-fsf: "z"     is vufsf=2 { export 0:1; }
-fsf: "w"     is vufsf=3 { export 0:1; }
+fsf: "x"     is vufsf=0 & vufs { tmp:4 = vufs[0,32]; export tmp; }
+fsf: "y"     is vufsf=1 & vufs { tmp:4 = vufs[32,32]; export tmp; }
+fsf: "z"     is vufsf=2 & vufs { tmp:4 = vufs[64,32]; export tmp; }
+fsf: "w"     is vufsf=3 & vufs { tmp:4 = vufs[96,32]; export tmp; }
 
-ftf: "x"     is vuftf=0 { export 0:1; }
-ftf: "y"     is vuftf=1 { export 0:1; }
-ftf: "z"     is vuftf=2 { export 0:1; }
-ftf: "w"     is vuftf=3 { export 0:1; }
+ftf: "x"     is vuftf=0 & vuft { tmp:4 = vuft[0,32]; export tmp; }
+ftf: "y"     is vuftf=1 & vuft { tmp:4 = vuft[32,32]; export tmp; }
+ftf: "z"     is vuftf=2 & vuft { tmp:4 = vuft[64,32]; export tmp; }
+ftf: "w"     is vuftf=3 & vuft { tmp:4 = vuft[96,32]; export tmp; }
 
 :lqc2 vuft, OFF_BASE                              is prime=54 & OFF_BASE & vuft {
     vuft = *:16 OFF_BASE;
@@ -188,7 +188,7 @@ with : prime=18 {
 :vadda^bc^dest "ACC", vufs, vuft                  is vuinst & dest          & vuft & vufs          & vuop_2_10=0b000001111 & bc
     { vuACC = VADDABC(vufs, vuft); }
 :vclip"w.xyz" vufs, vuft                          is vuinst & vudest=0b1110 & vuft & vufs          & vuop_0_10=0b00111111111
-    { vuCF = VCLIP(vufs, vuft); }
+    { vuCF_32 = VCLIP(vufs, vuft); }
 :vdiv "Q", vufs^fsf, vuft^ftf                     is vuinst & ftf & fsf     & vuft & vufs          & vuop_0_10=0b01110111100
     { vuQ = VDIV(vufs, fsf, vuft, ftf); }
 :vftoi0^dest vuft, vufs                           is vuinst & dest          & vuft & vufs          & vuop_0_10=0b00101111100
@@ -302,13 +302,13 @@ with : prime=18 {
 :vrget^dest vuft, "R"                             is vuinst & dest          & vuft & vufs=0b00000  & vuop_0_10=0b10000111101
     { vuft = VRGET(vuft); }
 :vrinit "R", vufs                                 is vuinst & vuftf=0b00 & vufsf & vuft=0b00000 & vufs & vuop_0_10=0b10000111110
-    { vuR = VRINIT(vufs); }
+    { vuR_32 = VRINIT(vufs); }
 :vrnext^dest vuft, "R"                            is vuinst & dest          & vuft & vufs=0b00000  & vuop_0_10=0b10000111100
-    { vuft = VRNEXT(vuR); }
+    { vuft = VRNEXT(vuR_32); }
 :vrsqrt "Q", vufs, vuft                           is vuinst & vuftf & vufsf & vuft & vufs          & vuop_0_10=0b01110111110
     { vuQ = VRSQRT(vufs, vuft); }
 :vrxor "R", vufs                                  is vuinst & vuftf=0b00 & vufsf & vuft=0b00000 & vufs & vuop_0_10=0b10000111111
-    { vuR = VRXOR(vufs); }
+    { vuR_32 = VRXOR(vufs); }
 :vsqd^dest vufs (--vuit)                          is vuinst & dest          & vuit & vufs          & vuop_0_10=0b01101111111
     { VSQD(vuit, vufs); }
 :vsqi^dest vufs (vuit++)                          is vuinst & dest          & vuit & vufs          & vuop_0_10=0b01101111101
@@ -353,7 +353,7 @@ with : prime=18 {
 :adda^bc^dest "ACC", vufs, vuft                  is vu1inst & dest          & vuft & vufs          & vuop_2_10=0b000001111 & bc
     { vuACC = VADDABC(vufs, vuft); }
 :clip"w.xyz" vufs, vuft                          is vu1inst & vudest=0b1110 & vuft & vufs          & vuop_0_10=0b00111111111
-    { vuCF = VCLIP(vufs, vuft); }
+    { vuCF_32 = VCLIP(vufs, vuft); }
 :div "Q", vufs^fsf, vuft^ftf                     is vu1inst & ftf & fsf     & vuft & vufs          & vuop_0_10=0b01110111100
     { vuQ = VDIV(vufs, fsf, vuft, ftf); }
 :ftoi0^dest vuft, vufs                           is vu1inst & dest          & vuft & vufs          & vuop_0_10=0b00101111100
@@ -467,13 +467,13 @@ with : prime=18 {
 :rget^dest vuft, "R"                             is vu1inst & dest          & vuft & vufs=0b00000  & vuop_0_10=0b10000111101
     { vuft = VRGET(vuft); }
 :rinit "R", vufs                                 is vu1inst & vuftf=0b00 & vufsf & vuft=0b00000 & vufs & vuop_0_10=0b10000111110
-    { vuR = VRINIT(vufs); }
+    { vuR_32 = VRINIT(vufs); }
 :rnext^dest vuft, "R"                            is vu1inst & dest          & vuft & vufs=0b00000  & vuop_0_10=0b10000111100
-    { vuft = VRNEXT(vuR); }
+    { vuft = VRNEXT(vuR_32); }
 :rsqrt "Q", vufs, vuft                           is vu1inst & vuftf & vufsf & vuft & vufs          & vuop_0_10=0b01110111110
     { vuQ = VRSQRT(vufs, vuft); }
 :rxor "R", vufs                                  is vu1inst & vuftf=0b00 & vufsf & vuft=0b00000 & vufs & vuop_0_10=0b10000111111
-    { vuR = VRXOR(vufs); }
+    { vuR_32 = VRXOR(vufs); }
 :sqd^dest vufs (--vuit)                          is vu1inst & dest          & vuit & vufs          & vuop_0_10=0b01101111111
     { VSQD(vuit, vufs); }
 :sqi^dest vufs (vuit++)                          is vu1inst & dest          & vuit & vufs          & vuop_0_10=0b01101111101
